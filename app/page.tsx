@@ -6,13 +6,13 @@ export default async function Home() {
   return (
     <>
       <header>
-        <nav className="px-5 lg:px-24 py-4">
+        <nav className="px-5 lg:px-24 h-16 flex items-center">
           <Button variant={"ghost"}>
             <Sparkles className=" mr-4" /> Company
           </Button>
         </nav>
       </header>
-      <main className="lg:grid lg:grid-cols-2 h-[100dvh] w-[100dvw]">
+      <main className="lg:grid lg:grid-cols-2 h-[calc(100dvh-4rem)] w-[100dvw]">
         <div className=" h-full w-full flex pt-16  lg:pt-0 justify-center lg:items-center py-4 px-5 lg:px-24">
           <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-2">
@@ -31,7 +31,7 @@ export default async function Home() {
                 width={500}
                 height={500}
                 priority
-                className=" lg:h-96"
+                className=" lg:h-80"
                 src={"/assets/images/doctors.svg"} />
             </div>
           </div>
