@@ -10,13 +10,12 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { faker } from '@faker-js/faker'
 import Image from "next/image"
-import { useState, useCallback } from "react"
+import { useState, } from "react"
 import Chat from "./chat"
+import { utils } from "@/lib/utils"
 export default function Component() {
     const [openChat, setOpenChat] = useState<boolean>(false)
-    const onToggleChat = useCallback(() => {
-        setOpenChat(prevOpenChat => !prevOpenChat);
-    }, []);
+    const onToggleChat = () => setOpenChat(e => !e)
     return (
         <>
             <div className="flex flex-col">
@@ -47,55 +46,29 @@ export default function Component() {
                                     <span className="sr-only">Toggle Menu</span>
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-screen md:w-[400px]">
-                                <div className="p-4 border-b">
+                            <DropdownMenuContent align="end" className="w-screen  md:w-[400px]">
+                                <div className="p-4 border-b sticky">
                                     <Input type="search" placeholder="Search messages..." className="h-9 w-full" />
                                 </div>
-                                <DropdownMenuItem onClick={onToggleChat} className=" cursor-pointer">
-                                    <div className="flex items-center gap-2">
-                                        <Avatar className="h-8 w-8">
-                                            <AvatarImage src="/assets/images/placeholder-user.jpg" />
-                                            <AvatarFallback>JD</AvatarFallback>
-                                        </Avatar>
-                                        <div className="flex-1">
-                                            <div className="font-semibold">John Doe</div>
-                                            <div className="text-sm text-muted-foreground line-clamp-1">
-                                                {"Hey, how's it going? I wanted to follow up on our last conversation."}
+                                <div className="max-h-[400px] overflow-auto">
+                                    {[...Array(12)].map((_, i) => (
+                                        <DropdownMenuItem key={i} onClick={onToggleChat} className=" cursor-pointer">
+                                            <div className="flex items-center gap-2">
+                                                <Avatar className="h-8 w-8">
+                                                    <AvatarImage src={faker.image.urlLoremFlickr({ category: "doctors" })} />
+                                                    <AvatarFallback>SM</AvatarFallback>
+                                                </Avatar>
+                                                <div className="flex-1">
+                                                    <div className="font-semibold">{faker.person.fullName()}</div>
+                                                    <div className="text-sm text-muted-foreground line-clamp-1">
+                                                        {faker.lorem.lines()}
+                                                    </div>
+                                                    <div className="text-xs text-muted-foreground">{utils.formatDate(faker.date.recent())}</div>
+                                                </div>
                                             </div>
-                                            <div className="text-xs text-muted-foreground">2 hours ago</div>
-                                        </div>
-                                    </div>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={onToggleChat} className=" cursor-pointer">
-                                    <div className="flex items-center gap-2">
-                                        <Avatar className="h-8 w-8">
-                                            <AvatarImage src="/assets/images/placeholder-user.jpg" />
-                                            <AvatarFallback>JA</AvatarFallback>
-                                        </Avatar>
-                                        <div className="flex-1">
-                                            <div className="font-semibold">Jane Arden</div>
-                                            <div className="text-sm text-muted-foreground line-clamp-1">
-                                                {"I'm available for a call tomorrow if that works for you."}
-                                            </div>
-                                            <div className="text-xs text-muted-foreground">1 day ago</div>
-                                        </div>
-                                    </div>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={onToggleChat} className=" cursor-pointer">
-                                    <div className="flex items-center gap-2">
-                                        <Avatar className="h-8 w-8">
-                                            <AvatarImage src="/assets/images/placeholder-user.jpg" />
-                                            <AvatarFallback>SM</AvatarFallback>
-                                        </Avatar>
-                                        <div className="flex-1">
-                                            <div className="font-semibold">Sarah Mayer</div>
-                                            <div className="text-sm text-muted-foreground line-clamp-1">
-                                                Did you have a chance to review the documents I sent over?
-                                            </div>
-                                            <div className="text-xs text-muted-foreground">3 days ago</div>
-                                        </div>
-                                    </div>
-                                </DropdownMenuItem>
+                                        </DropdownMenuItem>
+                                    ))}
+                                </div>
                             </DropdownMenuContent>
                         </DropdownMenu>
                         <DropdownMenu>
