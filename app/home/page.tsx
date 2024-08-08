@@ -10,6 +10,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { faker } from '@faker-js/faker'
+import Image from "next/image"
 export default async function Component() {
     return (
         <div className="flex flex-col">
@@ -53,7 +54,7 @@ export default async function Component() {
                                     <div className="flex-1">
                                         <div className="font-semibold">John Doe</div>
                                         <div className="text-sm text-muted-foreground line-clamp-1">
-                                            Hey, how's it going? I wanted to follow up on our last conversation.
+                                            {"Hey, how's it going? I wanted to follow up on our last conversation."}
                                         </div>
                                         <div className="text-xs text-muted-foreground">2 hours ago</div>
                                     </div>
@@ -68,7 +69,7 @@ export default async function Component() {
                                     <div className="flex-1">
                                         <div className="font-semibold">Jane Arden</div>
                                         <div className="text-sm text-muted-foreground line-clamp-1">
-                                            I'm available for a call tomorrow if that works for you.
+                                            {"I'm available for a call tomorrow if that works for you."}
                                         </div>
                                         <div className="text-xs text-muted-foreground">1 day ago</div>
                                     </div>
@@ -176,7 +177,7 @@ export default async function Component() {
                             {[...Array(12)].map((_, index) => (
                                 <Card key={index} className="group shadow-lg">
                                     <div className="relative h-60  overflow-hidden rounded-t-lg">
-                                        <img
+                                        <Image
                                             src={faker.image.urlLoremFlickr({ category: "doctors" })}
                                             alt={`Therapist ${index + 1}`}
                                             width={400}
