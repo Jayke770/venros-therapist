@@ -6,7 +6,7 @@ import { CircleX, EllipsisVertical, Send } from "lucide-react"
 import { cn } from "@/lib/utils"
 export default function Chat(props: { isOpen?: boolean, onToggleChat?: () => void }) {
   return (
-    <div className={cn(`${props?.isOpen ? "flex" : "hidden"} transition-all fixed z-50 bottom-0 md:right-5 h-screen md:h-[80vh] w-full md:w-96 bg-background`)}>
+    <div className={cn(`${props?.isOpen ? "flex" : "hidden"} transition-all fixed z-50 bottom-0 md:right-5 h-full md:h-[80vh] w-full md:w-96 bg-background`)}>
       <div className="flex flex-col w-full md:border md:rounded-t-xl shadow-lg">
         <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-2 sm:h-[60px] sm:px-4">
           <div className="flex-1">
