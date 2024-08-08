@@ -181,7 +181,7 @@ export default async function Component() {
                                             alt={`Therapist ${index + 1}`}
                                             width={400}
                                             height={300}
-                                            className="h-full w-full object-fill transition-all duration-300 group-hover:scale-105"
+                                            className="h-full w-full transition-all duration-300 group-hover:scale-105"
                                             style={{ aspectRatio: "400/300", objectFit: "cover" }}
                                         />
                                     </div>
