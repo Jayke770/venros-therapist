@@ -74,7 +74,16 @@ export default function Signup() {
             gender: "male",
             pNumber: "" as any,
             languages: [],
-            positionApplying: "" as any
+            positionApplying: "" as any,
+            confirmPassword: "",
+            degreeOrMarksheet: null,
+            educationQualification: "",
+            email: "",
+            mphilOrPhd: null,
+            password: "",
+            rciLicense: null,
+            workExpLetter: null,
+            yrsOfExp: ""
         },
     })
     const onSubmitSignUpForm = (values: z.infer<typeof therapistSignUpFormSchema>) => {

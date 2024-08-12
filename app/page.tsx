@@ -85,7 +85,7 @@ export default async function Home() {
                 Button</p>
             </div>
             <Button className={cn("w-40 mt-3 self-center lg:self-start ")} asChild>
-              <Link href={"/home"}>
+              <Link href={"/dashboard"}>
                 Book Now
               </Link>
             </Button>
