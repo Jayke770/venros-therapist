@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { CircleX, EllipsisVertical, Send } from "lucide-react"
 import { cn } from "@/lib/utils"
-export default function Chat(props: { isOpen?: boolean, onToggleChat?: () => void }) {
+export default function Chat(props: { isOpen?: boolean }) {
   return (
     <div className={cn(`${props?.isOpen ? "flex" : "hidden"} transition-all fixed z-50 bottom-0 md:right-5 h-full md:h-[80vh] w-full md:w-96 bg-background`)}>
       <div className="flex flex-col w-full md:border md:rounded-t-xl shadow-lg">
@@ -36,7 +36,7 @@ export default function Chat(props: { isOpen?: boolean, onToggleChat?: () => voi
                 <DropdownMenuItem>Delete conversation</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button onClick={props?.onToggleChat} size={"icon"} variant={"ghost"} className="rounded-full">
+            <Button size={"icon"} variant={"ghost"} className="rounded-full">
               <CircleX className="h-4 w-4 text-red-500" />
             </Button>
           </div>

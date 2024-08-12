@@ -1,4 +1,3 @@
-"use client"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel } from "@/components/ui/dropdown-menu"
@@ -10,17 +9,17 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { faker } from '@faker-js/faker'
 import Image from "next/image"
-import { useState, } from "react"
 import Chat from "./chat"
 import { utils } from "@/lib/utils"
-export default function Component() {
-    const [openChat, setOpenChat] = useState<boolean>(false)
-    const onToggleChat = () => setOpenChat(e => !e)
+export default async function Component(props: {
+    params: { [key: string]: string },
+    searchParams: { chatId?: string }
+}) {
     return (
         <>
             <div className="flex flex-col">
                 <header className="flex h-20 w-full shrink-0 items-center justify-between lg:justify-normal px-4 md:px-24">
-                    <Link href="#" className="flex items-center justify-center" prefetch={false}>
+                    <Link href="/home" className="flex items-center justify-center">
                         <Sparkles className="h-6 w-6 mr-4" /> Company
                         <span className="sr-only">Toggle menu</span>
                     </Link>
@@ -52,20 +51,22 @@ export default function Component() {
                                 </div>
                                 <div className="max-h-[400px] overflow-auto">
                                     {[...Array(12)].map((_, i) => (
-                                        <DropdownMenuItem key={i} onClick={onToggleChat} className=" cursor-pointer">
-                                            <div className="flex items-center gap-2">
-                                                <Avatar className="h-8 w-8">
-                                                    <AvatarImage src={faker.image.urlLoremFlickr({ category: "doctors" })} />
-                                                    <AvatarFallback>SM</AvatarFallback>
-                                                </Avatar>
-                                                <div className="flex-1">
-                                                    <div className="font-semibold">{faker.person.fullName()}</div>
-                                                    <div className="text-sm text-muted-foreground line-clamp-1">
-                                                        {faker.lorem.lines()}
+                                        <DropdownMenuItem key={i} className=" cursor-pointer" asChild>
+                                            <Link href={`?chatId=${i}`}>
+                                                <div className="flex items-center gap-2">
+                                                    <Avatar className="h-8 w-8">
+                                                        <AvatarImage src={faker.image.urlLoremFlickr({ category: "doctors" })} />
+                                                        <AvatarFallback>SM</AvatarFallback>
+                                                    </Avatar>
+                                                    <div className="flex-1">
+                                                        <div className="font-semibold">{faker.person.fullName()}</div>
+                                                        <div className="text-sm text-muted-foreground line-clamp-1">
+                                                            {faker.lorem.lines()}
+                                                        </div>
+                                                        <div className="text-xs text-muted-foreground">{utils.formatDate(faker.date.recent())}</div>
                                                     </div>
-                                                    <div className="text-xs text-muted-foreground">{utils.formatDate(faker.date.recent())}</div>
                                                 </div>
-                                            </div>
+                                            </Link>
                                         </DropdownMenuItem>
                                     ))}
                                 </div>
@@ -216,7 +217,7 @@ export default function Component() {
                     </nav>
                 </footer>
             </div>
-            <Chat isOpen={openChat} onToggleChat={onToggleChat} />
+            <Chat isOpen={!!props?.searchParams?.chatId} />
         </>
     )
 }

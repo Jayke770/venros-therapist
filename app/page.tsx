@@ -16,7 +16,7 @@ export default async function Home() {
             </Button>
           </SheetTrigger>
           <SheetContent side="left">
-            <Link href="#" className="mr-6 hidden lg:flex" prefetch={false}>
+            <Link href="/" className="mr-6 hidden lg:flex">
               <Sparkles className="h-6 w-6" />
               <span className="sr-only">Company</span>
             </Link>
@@ -36,7 +36,7 @@ export default async function Home() {
             </div>
           </SheetContent>
         </Sheet>
-        <Link href="#" className="mr-6 hidden lg:flex" prefetch={false}>
+        <Link href="/" className="mr-6 hidden lg:flex">
           <Sparkles className="h-6 w-6" />
           <span className="sr-only">Company</span>
         </Link>
@@ -84,7 +84,11 @@ export default async function Home() {
               <p className="text-center lg:text-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 Button</p>
             </div>
-            <Button className={cn("w-40 mt-3 self-center lg:self-start ")}>Book Now</Button>
+            <Button className={cn("w-40 mt-3 self-center lg:self-start ")} asChild>
+              <Link href={"/home"}>
+                Book Now
+              </Link>
+            </Button>
           </div>
         </div>
         <div className="h-full w-full hidden lg:flex justify-center items-center">
