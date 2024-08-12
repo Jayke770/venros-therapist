@@ -38,8 +38,8 @@ import { Calendar } from "@/components/ui/calendar"
 import { format } from "date-fns"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import useLanguages from "@/hooks/useLanguages"
-import type { ILanguages } from "@/types"
 import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
 const therapistSignUpFormSchema = z.object({
     fullName: z.string().min(5, { message: "Invalid Full Name." }),
     dob: z.date({
@@ -51,7 +51,17 @@ const therapistSignUpFormSchema = z.object({
     languages: z.array(z.object({
         name: z.string(),
         code: z.string()
-    }), { required_error: "Please select atleast one language" })
+    }), { required_error: "Please select atleast one language" }),
+    positionApplying: z.union([z.literal("counsellor"), z.literal("clinical psychologist"), z.literal("specialized therapist")], { required_error: "Position Applying is required" }),
+    educationQualification: z.string().min(10, { message: "Education Qualification is required." }),
+    yrsOfExp: z.string().min(1, { message: "Years of Experience  is required." }),
+    mphilOrPhd: z.any(),
+    rciLicense: z.any(),
+    degreeOrMarksheet: z.any(),
+    workExpLetter: z.any(),
+    email: z.string().min(5, { message: 'Email is required' }),
+    password: z.string().min(8, { message: "Password must be more than 8 characters" }),
+    confirmPassword: z.string().min(8, { message: "Password must be more than 8 characters" })
 })
 export default function Signup() {
     const { languagesLoading, languages } = useLanguages()
@@ -63,7 +73,8 @@ export default function Signup() {
             dob: new Date(),
             gender: "male",
             pNumber: "" as any,
-            languages: []
+            languages: [],
+            positionApplying: "" as any
         },
     })
     const onSubmitSignUpForm = (values: z.infer<typeof therapistSignUpFormSchema>) => {
@@ -71,7 +82,7 @@ export default function Signup() {
     }
     return (
         <main className=" container flex justify-center items-center p-5 lg:py-10 lg:px-24">
-            <Tabs defaultValue="therapist" className="w-full lg:w-[600px]">
+            <Tabs defaultValue="therapist" className=" transition-all">
                 <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="client">Client Registration</TabsTrigger>
                     <TabsTrigger value="therapist">Therapist Registration</TabsTrigger>
@@ -115,7 +126,7 @@ export default function Signup() {
                         </CardFooter>
                     </Card>
                 </TabsContent>
-                <TabsContent value="therapist">
+                <TabsContent value="therapist" className="w-full lg:w-[900px]">
                     <Form {...therapistSignUpForm}>
                         <form onSubmit={therapistSignUpForm.handleSubmit(onSubmitSignUpForm)}>
                             <Card className="shadow-lg">
@@ -124,7 +135,7 @@ export default function Signup() {
                                     <CardDescription>Fill out the form below to create your therapist account.</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 space-y-2">
+                                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                                         <FormField
                                             control={therapistSignUpForm.control}
                                             name="fullName"
@@ -154,13 +165,11 @@ export default function Signup() {
                                                 </FormItem>
                                             )}
                                         />
-                                    </div>
-                                    <div className="space-y-2">
                                         <FormField
                                             control={therapistSignUpForm.control}
                                             name="dob"
                                             render={({ field }) => (
-                                                <FormItem className="flex flex-col">
+                                                <FormItem className="flex flex-col lg:mt-2.5 col-span-full lg:col-span-1">
                                                     <FormLabel>Date of birth</FormLabel>
                                                     <Popover>
                                                         <PopoverTrigger asChild>
@@ -168,7 +177,7 @@ export default function Signup() {
                                                                 <Button
                                                                     variant={"outline"}
                                                                     className={cn(
-                                                                        "pl-3 text-left font-normal mt-2",
+                                                                        "pl-3 text-left font-normal",
                                                                         !field.value && "text-muted-foreground"
                                                                     )}
                                                                 >
@@ -198,22 +207,61 @@ export default function Signup() {
                                             )}
                                         />
                                     </div>
-                                    <div className="space-y-2">
+                                    <FormField
+                                        control={therapistSignUpForm.control}
+                                        name="address"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Address</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder="Address" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                         <FormField
                                             control={therapistSignUpForm.control}
-                                            name="address"
+                                            name="email"
+                                            render={({ field }) => (
+                                                <FormItem className="col-span-full">
+                                                    <FormLabel>Email</FormLabel>
+                                                    <FormControl>
+                                                        <Input placeholder="Email" type="email" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={therapistSignUpForm.control}
+                                            name="password"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>Address</FormLabel>
+                                                    <FormLabel>Password</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Address" {...field} />
+                                                        <Input placeholder="Password" type="password" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={therapistSignUpForm.control}
+                                            name="confirmPassword"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Confirm Password</FormLabel>
+                                                    <FormControl>
+                                                        <Input placeholder="Password" type="password" {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
                                         />
                                     </div>
-                                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 space-y-2">
+                                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                         <FormField
                                             control={therapistSignUpForm.control}
                                             name="gender"
@@ -242,8 +290,8 @@ export default function Signup() {
                                             control={therapistSignUpForm.control}
                                             name="languages"
                                             render={({ field }) => (
-                                                <FormItem className="flex flex-col">
-                                                    <FormLabel className="mb-0.5">Languages Spoken</FormLabel>
+                                                <FormItem className="flex flex-col md:mt-2.5">
+                                                    <FormLabel className="">Languages Spoken</FormLabel>
                                                     <Popover>
                                                         <PopoverTrigger asChild>
                                                             <FormControl>
@@ -295,6 +343,114 @@ export default function Signup() {
                                                     <FormDescription>
                                                         {field.value.map(e => <Badge key={`sel-${e.code}`} className="m-1">{e.name}</Badge>)}
                                                     </FormDescription>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+                                    <Separator />
+                                    <div className="text-sm font-bold">Employment/Educational Information</div>
+                                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                        <FormField
+                                            control={therapistSignUpForm.control}
+                                            name="positionApplying"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Position Applying</FormLabel>
+                                                    <FormControl>
+                                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                            <SelectTrigger >
+                                                                <SelectValue placeholder="Select Position" />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                <SelectGroup>
+                                                                    <SelectItem value="counsellor">Counsellor</SelectItem>
+                                                                    <SelectItem value="clinical psychologist">Clinical Psychologist</SelectItem>
+                                                                    <SelectItem value="specialized therapist">Specialized Therapist</SelectItem>
+                                                                </SelectGroup>
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={therapistSignUpForm.control}
+                                            name="yrsOfExp"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Years of Experience</FormLabel>
+                                                    <FormControl>
+                                                        <Input placeholder="Years of Experience" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+                                    <FormField
+                                        control={therapistSignUpForm.control}
+                                        name="educationQualification"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Educational Qualification</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder="Educational Qualification" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                        <FormField
+                                            control={therapistSignUpForm.control}
+                                            name="mphilOrPhd"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>{"M.Phil/Ph.D Degree (If Applicable)"}</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="file" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={therapistSignUpForm.control}
+                                            name="rciLicense"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>{"RCI License (If Applicable)"}</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="file" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={therapistSignUpForm.control}
+                                            name="degreeOrMarksheet"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>{"Masters Degree/Marksheet"}</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="file" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={therapistSignUpForm.control}
+                                            name="workExpLetter"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>{"Work Experience Letter"}</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="file" {...field} />
+                                                    </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
