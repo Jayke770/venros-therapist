@@ -105,7 +105,7 @@ export default async function User(props: any) {
                     </Card>
                 </div>
                 <div className="pb-5 flex-[70%]">
-                    <ScrollArea className={cn("h-auto lg:h-[80vh]")} >
+                    <ScrollArea className={cn("h-auto lg:h-[90vh]")} >
                         {[...Array(20)].map((_, i) => (
                             <Card key={i} className={cn("shadow-none w-full mt-2 first:mt-0 last:mb-2")}>
                                 <CardContent className="p-4">
