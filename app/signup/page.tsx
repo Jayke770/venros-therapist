@@ -59,6 +59,7 @@ const therapistSignUpFormSchema = z.object({
     rciLicense: z.any(),
     degreeOrMarksheet: z.any(),
     workExpLetter: z.any(),
+    otherCertifications: z.any(),
     email: z.string().min(5, { message: 'Email is required' }),
     password: z.string().min(8, { message: "Password must be more than 8 characters" }),
     confirmPassword: z.string().min(8, { message: "Password must be more than 8 characters" })
@@ -453,6 +454,19 @@ export default function Signup() {
                                         />
                                         <FormField
                                             control={therapistSignUpForm.control}
+                                            name="otherCertifications"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>{"Other Certifications ( if Applicable)"}</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="file" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={therapistSignUpForm.control}
                                             name="workExpLetter"
                                             render={({ field }) => (
                                                 <FormItem>
@@ -465,34 +479,6 @@ export default function Signup() {
                                             )}
                                         />
                                     </div>
-                                    {/* <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                <div className="space-y-2">
-                                    <Label htmlFor="name">Name</Label>
-                                    <Input id="name" placeholder="Enter your name" />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="pnumber">Phone Number</Label>
-                                    <Input id="pnumber" type="tel" placeholder="Phone Number" />
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                <div className="space-y-2">
-                                    <Label htmlFor="password">Password</Label>
-                                    <Input id="password" type="password" placeholder="Enter a password" />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="confirmPassword">Confirm Password</Label>
-                                    <Input id="confirmPassword" type="password" placeholder="Confirm your password" />
-                                </div>
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="credentials">Professional Credentials</Label>
-                                <Input id="credentials" placeholder="Enter your credentials" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="expertise">Areas of Expertise</Label>
-                                <Textarea id="expertise" placeholder="Enter your areas of expertise" />
-                            </div> */}
                                 </CardContent>
                                 <CardFooter>
                                     <Button type="submit" className="w-full">
