@@ -4,7 +4,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Separator } from "@/components/ui/separator"
 import { faker } from '@faker-js/faker'
-import { CalendarCheck, MessageCircle } from "lucide-react"
+import { AwardIcon, CalendarCheck, LocateIcon, MailIcon, MessageCircle, PhoneIcon } from "lucide-react"
 import {
     Card,
     CardContent,
@@ -44,12 +44,64 @@ export default async function User(props: any) {
                 </div>
             </div>
             <div className="flex flex-col lg:flex-row gap-4 mt-56 w-full lg:mt-24">
-                <div className="flex flex-col gap-2 flex-[30%] sticky top-0">
+                <div className="flex flex-col gap-2 flex-[30%]">
                     <Card className={cn("shadow-none w-full")}>
-                        <CardHeader>
-                            <CardTitle>Bio</CardTitle>
-                            <CardDescription>{faker.lorem.paragraph()}</CardDescription>
-                        </CardHeader>
+                        <CardContent className="p-6 flex flex-col gap-4">
+                            <div className="flex flex-col gap-1">
+                                <div className="text-md font-semibold">About</div>
+                                <div className="text-muted-foreground text-base ">{faker.lorem.paragraph()}</div>
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <div className="text-md font-semibold">Contact Information</div>
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-2">
+                                        <MailIcon className="w-5 h-5 text-muted-foreground" />
+                                        <span>johndoe@example.com</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <PhoneIcon className="w-5 h-5 text-muted-foreground" />
+                                        <span>{faker.phone.number()}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <LocateIcon className="w-5 h-5 text-muted-foreground" />
+                                        <span>{faker.location.city()}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <div className="text-md font-semibold">Education and Experience</div>
+                                <div className="space-y-4">
+                                    <div>
+                                        <div className="font-medium">Ph.D. in Clinical Psychology</div>
+                                        <p className="text-muted-foreground">University of California, Los Angeles</p>
+                                        <p className="text-muted-foreground">2010 - 2015</p>
+                                    </div>
+                                    <div>
+                                        <div className="font-medium">M.A. in Psychology</div>
+                                        <p className="text-muted-foreground">University of California, Berkeley</p>
+                                        <p className="text-muted-foreground">2008 - 2010</p>
+                                    </div>
+                                    <div>
+                                        <div className="font-medium">Clinical Psychologist</div>
+                                        <p className="text-muted-foreground">ABC Counseling Center</p>
+                                        <p className="text-muted-foreground">2015 - Present</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <div className="text-md font-semibold">Licenses and Certifications</div>
+                                <div className="space-y-2">
+                                    <div className="flex items-center gap-2">
+                                        <AwardIcon className="w-5 h-5 text-muted-foreground" />
+                                        <span>Licensed Clinical Psychologist, State of California</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <AwardIcon className="w-5 h-5 text-muted-foreground" />
+                                        <span>Certified Cognitive-Behavioral Therapist</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </CardContent>
                     </Card>
                 </div>
                 <div className="pb-5 flex-[70%]">

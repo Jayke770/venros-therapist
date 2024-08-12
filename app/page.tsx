@@ -16,9 +16,9 @@ export default async function Home() {
             </Button>
           </SheetTrigger>
           <SheetContent side="left">
-            <Link href="/" className="mr-6 hidden lg:flex">
-              <Sparkles className="h-6 w-6" />
-              <span className="sr-only">Company</span>
+            <Link href="/" className="mr-6 flex">
+              <Sparkles className="h-6 w-6 mr-4" /> Company
+              <span className="sr-only">Toggle menu</span>
             </Link>
             <div className="grid gap-1 py-6">
               <Link href="#" className="flex w-full items-center py-2 text-lg font-semibold" prefetch={false}>
@@ -37,8 +37,8 @@ export default async function Home() {
           </SheetContent>
         </Sheet>
         <Link href="/" className="mr-6 hidden lg:flex">
-          <Sparkles className="h-6 w-6" />
-          <span className="sr-only">Company</span>
+          <Sparkles className="h-6 w-6 mr-4" />Company
+          <span className="sr-only">Toggle menu</span>
         </Link>
         <nav className="ml-auto hidden lg:flex gap-2">
           <Link
