@@ -93,6 +93,7 @@ export default async function Component(props: {
                                             </Button>
                                             <Button asChild variant={"outline"} className="w-full">
                                                 <Link
+                                                    scroll={false}
                                                     href={`/dashboard/user?id=${index}`}>
                                                     View Profile
                                                 </Link>
