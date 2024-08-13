@@ -18,7 +18,11 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 export default async function User(props: any) {
     return (
         <main className=" px-4 lg:px-24 py-3 ">
-            <div className="relative bg-primary rounded-2xl h-72  lg:h-80 min-w-[250px] w-full">
+            <div
+                style={{
+                    backgroundImage: "url(/assets/images/hospital.jpg)"
+                }}
+                className="relative rounded-2xl h-72 lg:h-80 min-w-[250px] w-full">
                 <div className=" absolute lg:left-5 -bottom-44 lg:-bottom-16 lg:right-5 w-full flex justify-between gap-3 lg:gap-0 flex-col lg:flex-row lg:w-auto transition-all">
                     <div className="flex flex-col lg:flex-row">
                         <div className="flex justify-center items-center">
