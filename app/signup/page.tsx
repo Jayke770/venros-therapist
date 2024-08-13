@@ -60,7 +60,7 @@ const therapistSignUpFormSchema = z.object({
     degreeOrMarksheet: z.any(),
     workExpLetter: z.any(),
     otherCertifications: z.any(),
-    email: z.string().min(5, { message: 'Email is required' }),
+    email: z.string().email({ message: 'Email is invalid' }),
     password: z.string().min(8, { message: "Password must be more than 8 characters" }),
     confirmPassword: z.string().min(8, { message: "Password must be more than 8 characters" })
 })

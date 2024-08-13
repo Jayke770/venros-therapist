@@ -25,37 +25,40 @@ export default async function Component(props: {
                     </div>
                     <div className="flex flex-col pb-5">
                         {/* filters & sort */}
-                        <div className="flex items-center space-x-4 mb-4">
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="outline" className="flex items-center space-x-2">
-                                        <FilterIcon className="h-5 w-5" />
-                                        <span>Filter</span>
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="start" className="w-56">
-                                    <DropdownMenuLabel>Filter by:</DropdownMenuLabel>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem>
-                                        <Checkbox id="filter-location" />
-                                        <Label htmlFor="filter-location" className="ml-2">
-                                            Location
-                                        </Label>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        <Checkbox id="filter-availability" />
-                                        <Label htmlFor="filter-availability" className="ml-2">
-                                            Availability
-                                        </Label>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        <Checkbox id="filter-expertise" />
-                                        <Label htmlFor="filter-expertise" className="ml-2">
-                                            Expertise
-                                        </Label>
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                        <div className="flex items-center justify-between space-x-4 mb-4">
+                            <div className="flex gap-2">
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="outline" className="flex items-center space-x-2">
+                                            <FilterIcon className="h-5 w-5" />
+                                            <span className="hidden md:block">Filter</span>
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="start" className="w-56">
+                                        <DropdownMenuLabel>Filter by:</DropdownMenuLabel>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem>
+                                            <Checkbox id="filter-location" />
+                                            <Label htmlFor="filter-location" className="ml-2">
+                                                Location
+                                            </Label>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem>
+                                            <Checkbox id="filter-availability" />
+                                            <Label htmlFor="filter-availability" className="ml-2">
+                                                Availability
+                                            </Label>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem>
+                                            <Checkbox id="filter-expertise" />
+                                            <Label htmlFor="filter-expertise" className="ml-2">
+                                                Expertise
+                                            </Label>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                                <Input className="w-full" type="search" placeholder="Search" />
+                            </div>
                         </div>
                         {/* list of therapist */}
                         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
