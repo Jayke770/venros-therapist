@@ -20,7 +20,10 @@ export default async function User(props: any) {
         <main className=" px-4 lg:px-24 py-3 ">
             <div
                 style={{
-                    backgroundImage: "url(/assets/images/hospital.jpg)"
+                    backgroundImage: "url(/assets/images/hospital.jpg)",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat"
                 }}
                 className="relative rounded-2xl h-72 lg:h-80 min-w-[250px] w-full">
                 <div className=" absolute lg:left-5 -bottom-44 lg:-bottom-16 lg:right-5 w-full flex justify-between gap-3 lg:gap-0 flex-col lg:flex-row lg:w-auto transition-all">
