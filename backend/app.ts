@@ -6,4 +6,6 @@ const app = express()
 app.use(currentSession)
 app.use(authRoute)
 app.get("/api", async (req, res) => res.json({ status: true }))
-app.listen(process?.env?.PORT ?? 80, () => console.log(`Server started on port ${process?.env?.PORT ?? 8000}`))
+app.listen(process?.env?.PORT ?? 8000, () => {
+    console.log(`Server started on port ${process?.env?.PORT ?? 8000}`)
+})
