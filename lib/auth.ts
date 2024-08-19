@@ -2,7 +2,7 @@ import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import dbConnect from "@/models/dbConnect"
 import { UserData } from '@/models/collections'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 export const { handlers, signIn, signOut, auth } = NextAuth({
     trustHost: true,
     secret: process.env?.AUTH_SECRET,
@@ -19,8 +19,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     if (!userData) return null
                     const isValidPassword = await bcrypt.compare(credentials.password as string, userData.password)
                     if (!isValidPassword) return null
-                    return { name: "ss", email: "fasfsa", id: "fasfafsafsf", image: "fashfsafjshafjsaf" }
+                    return { name: userData.name, email: userData.email, id: userData._id.toString(), image: null }
                 } catch (e) {
+                    console.log(e)
                     return null
                 }
             },

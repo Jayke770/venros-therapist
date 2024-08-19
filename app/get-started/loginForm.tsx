@@ -46,11 +46,12 @@ export default function LoginForm() {
         try {
             setIsSigningIn(true)
             let redirect = false
-            const promise = () => new Promise<SignInResponse>((resolve, reject) => signIn("credentials", { redirect: false, callbackUrl: undefined, ...data }).then(e => e?.ok ? resolve(e) : reject()).catch(e => reject(e)));
+            const promise = () => new Promise<SignInResponse>((resolve, reject) => signIn("credentials", { redirect: false, callbackUrl: undefined, ...data }).then(e => e?.ok && !e?.error ? resolve(e) : reject()).catch(e => reject(e)));
             toast.promise(promise, {
                 richColors: true,
                 dismissible: false,
                 loading: 'Please wait...',
+                duration: 1000,
                 success: () => {
                     redirect = true
                     return "Successfully logged In"
@@ -59,6 +60,7 @@ export default function LoginForm() {
                     redirect = false
                     return "Failed to authenticate"
                 },
+                onAutoClose: () => redirect && router.push("/dashboard", { scroll: false }),
                 onDismiss: () => redirect && router.push("/dashboard", { scroll: false })
             });
             setIsSigningIn(false)
