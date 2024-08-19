@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { dayJs } from '@/lib/utils'
 import dbConnect from '@/models/dbConnect'
 import { UserData } from '@/models/collections'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 const signUpSchema = z.union([
     z.object({
         type: z.literal("therapist"),
