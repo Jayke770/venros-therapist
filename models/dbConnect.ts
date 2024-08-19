@@ -1,7 +1,6 @@
 //@ts-nocheck
 import mongoose from "mongoose";
-import { envConfig } from "@/lib/config";
-const MONGODB_URI = envConfig.MONGODB_URI;
+const MONGODB_URI = process?.env?.MONGODB_URI;
 let cached = global.mongoose;
 if (!cached) {
     cached = global.mongoose = { conn: null, promise: null };
