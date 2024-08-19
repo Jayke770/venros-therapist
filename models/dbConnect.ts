@@ -9,7 +9,7 @@ async function dbConnect() {
     const opts = {
         bufferCommands: false,
     };
-    if (envConfig.isDevelopment) {
+    if (process?.env?.NODE_ENV !== "production") {
         if (cached.conn) {
             return cached.conn;
         }
