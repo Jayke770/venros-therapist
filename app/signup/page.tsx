@@ -1,4 +1,5 @@
 "use client"
+import { useState } from "react"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
@@ -33,13 +34,14 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { cn } from "@/lib/utils"
-import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react"
+import { CalendarIcon, Check, ChevronsUpDown, Loader2 } from "lucide-react"
 import { Calendar } from "@/components/ui/calendar"
 import { format } from "date-fns"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import useLanguages from "@/hooks/useLanguages"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
+import { toast } from "sonner"
 const therapistSignUpFormSchema = z.object({
     fullName: z.string().min(5, { message: "Invalid Full Name." }),
     dob: z.date({
@@ -55,17 +57,26 @@ const therapistSignUpFormSchema = z.object({
     positionApplying: z.union([z.literal("counsellor"), z.literal("clinical psychologist"), z.literal("specialized therapist")], { required_error: "Position Applying is required" }),
     educationQualification: z.string().min(10, { message: "Education Qualification is required." }),
     yrsOfExp: z.string().min(1, { message: "Years of Experience  is required." }),
-    mphilOrPhd: z.any(),
-    rciLicense: z.any(),
-    degreeOrMarksheet: z.any(),
-    workExpLetter: z.any(),
-    otherCertifications: z.any(),
+    mphilOrPhd: z.custom<File>().optional(),
+    rciLicense: z.custom<File>().optional(),
+    degreeOrMarksheet: z.custom<File>().optional(),
+    workExpLetter: z.custom<File>().optional(),
+    otherCertifications: z.custom<File>().optional(),
+    email: z.string().email({ message: 'Email is invalid' }),
+    password: z.string().min(8, { message: "Password must be more than 8 characters" }),
+    confirmPassword: z.string().min(8, { message: "Password must be more than 8 characters" })
+})
+const userSignUpFormSchema = z.object({
+    fullName: z.string().min(5, { message: "Invalid Full Name." }),
+    pNumber: z.string().min(9, { message: "Invalid Phone Number." }),
+    gender: z.union([z.literal("male"), z.literal("female"), z.literal("undisclosed")], { required_error: "Gender is required" }),
     email: z.string().email({ message: 'Email is invalid' }),
     password: z.string().min(8, { message: "Password must be more than 8 characters" }),
     confirmPassword: z.string().min(8, { message: "Password must be more than 8 characters" })
 })
 export default function Signup() {
-    const { languagesLoading, languages } = useLanguages()
+    const { languages } = useLanguages()
+    const [isCreatingAccount, setCreatingAccount] = useState<boolean>(false)
     const therapistSignUpForm = useForm<z.infer<typeof therapistSignUpFormSchema>>({
         resolver: zodResolver(therapistSignUpFormSchema),
         defaultValues: {
@@ -77,68 +88,174 @@ export default function Signup() {
             languages: [],
             positionApplying: "" as any,
             confirmPassword: "",
-            degreeOrMarksheet: null,
             educationQualification: "",
             email: "",
-            mphilOrPhd: null,
+            mphilOrPhd: undefined,
             password: "",
-            rciLicense: null,
-            workExpLetter: null,
-            yrsOfExp: ""
+            rciLicense: undefined,
+            workExpLetter: undefined,
+            otherCertifications: undefined,
+            degreeOrMarksheet: undefined,
+            yrsOfExp: "",
         },
     })
-    const onSubmitSignUpForm = (values: z.infer<typeof therapistSignUpFormSchema>) => {
-        console.log(values)
+    const userSignUpForm = useForm<z.infer<typeof userSignUpFormSchema>>({
+        resolver: zodResolver(userSignUpFormSchema),
+        defaultValues: {
+            fullName: "",
+            gender: "male",
+            pNumber: "" as any,
+            confirmPassword: "",
+            email: "",
+            password: "",
+        },
+    })
+    const onSubmitSignUpForm = async (type: "therapist" | "user", data: z.infer<typeof therapistSignUpFormSchema> | z.infer<typeof userSignUpFormSchema>) => {
+        setCreatingAccount(true)
+        let formData = new FormData()
+        formData.append("type", type ?? "user")
+        //@ts-ignore
+        Object.keys(data).map(e => e === "languages" ? formData.append(e, JSON.stringify(data[e])) : formData.append(e, data[e]))
+        const promise = () => new Promise<{ status: boolean, message?: string }>((resolve, reject) => fetch("/api/auth/user", {
+            method: "post",
+            body: formData
+        })
+            .then(e => e.json())
+            .then((e: { status: boolean, message?: string }) => e?.status ? resolve(e) : reject(e.message))
+            .catch(e => reject("Failed to create acount"))
+        );
+        toast.promise(promise, {
+            richColors: true,
+            dismissible: false,
+            loading: 'Creating Account...',
+            success: (data) => data.message,
+            error: (e) => e,
+        });
+        setCreatingAccount(false)
     }
     return (
         <main className=" container flex justify-center items-center p-5 lg:py-10 lg:px-24">
-            <Tabs defaultValue="therapist" className=" transition-all">
+            <Tabs defaultValue="client" className=" transition-all">
                 <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="client">Client Registration</TabsTrigger>
                     <TabsTrigger value="therapist">Therapist Registration</TabsTrigger>
                 </TabsList>
-                <TabsContent value="client">
-                    <Card className="shadow-lg">
-                        <CardHeader>
-                            <CardTitle className="text-2xl font-bold">Client Registration</CardTitle>
-                            <CardDescription>Fill out the form below to create your client account.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                <div className="space-y-2">
-                                    <Label htmlFor="name">Name</Label>
-                                    <Input id="name" placeholder="Enter your name" />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="email">Email</Label>
-                                    <Input id="email" type="email" placeholder="Enter your email" />
-                                </div>
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="pnumber">Phone Number</Label>
-                                <Input id="pnumber" type="tel" placeholder="Phone Number" />
-                            </div>
-                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                <div className="space-y-2">
-                                    <Label htmlFor="password">Password</Label>
-                                    <Input id="password" type="password" placeholder="Enter a password" />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="confirmPassword">Confirm Password</Label>
-                                    <Input id="confirmPassword" type="password" placeholder="Confirm your password" />
-                                </div>
-                            </div>
-                        </CardContent>
-                        <CardFooter>
-                            <Button type="submit" className="w-full">
-                                Register as Client
-                            </Button>
-                        </CardFooter>
-                    </Card>
+                <TabsContent value="client" className="w-full lg:w-[500px]">
+                    <Form {...userSignUpForm}>
+                        <form onSubmit={userSignUpForm.handleSubmit((e) => onSubmitSignUpForm("user", e))}>
+                            <Card className="shadow-lg">
+                                <CardHeader>
+                                    <CardTitle className="text-2xl font-bold">Client Registration</CardTitle>
+                                    <CardDescription>Fill out the form below to create your client account.</CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                        <FormField
+                                            control={userSignUpForm.control}
+                                            name="fullName"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Full Name</FormLabel>
+                                                    <FormControl>
+                                                        <Input placeholder="Enter your name" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={userSignUpForm.control}
+                                            name="email"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Email</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="email" placeholder="Enter email" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+                                    <FormField
+                                        control={userSignUpForm.control}
+                                        name="pNumber"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Phone Number</FormLabel>
+                                                <FormControl>
+                                                    <Input type="tel" placeholder="Phone Number" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={userSignUpForm.control}
+                                        name="gender"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Gender</FormLabel>
+                                                <FormControl>
+                                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                        <SelectTrigger >
+                                                            <SelectValue placeholder="Select a Gender" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectGroup>
+                                                                <SelectItem value="male">Male</SelectItem>
+                                                                <SelectItem value="female">Female</SelectItem>
+                                                                <SelectItem value="undisclosed">Undisclosed</SelectItem>
+                                                            </SelectGroup>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                        <FormField
+                                            control={userSignUpForm.control}
+                                            name="password"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Password</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="password" placeholder="Password" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={userSignUpForm.control}
+                                            name="confirmPassword"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Confirm Passowrd</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="password" placeholder="Password" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+                                </CardContent>
+                                <CardFooter>
+                                    <Button disabled={isCreatingAccount} type="submit" className="w-full">
+                                        <Loader2 className={`${isCreatingAccount ? 'block' : 'hidden'} mr-2 h-4 w-4 animate-spin `} />
+                                        Register as Client
+                                    </Button>
+                                </CardFooter>
+                            </Card>
+                        </form>
+                    </Form>
                 </TabsContent>
                 <TabsContent value="therapist" className="w-full lg:w-[900px]">
                     <Form {...therapistSignUpForm}>
-                        <form onSubmit={therapistSignUpForm.handleSubmit(onSubmitSignUpForm)}>
+                        <form onSubmit={therapistSignUpForm.handleSubmit((e) => onSubmitSignUpForm("therapist", e))}>
                             <Card className="shadow-lg">
                                 <CardHeader>
                                     <CardTitle className="text-2xl font-bold">Therapist Registration</CardTitle>
@@ -324,7 +441,7 @@ export default function Signup() {
                                                                 <CommandList>
                                                                     <CommandEmpty>No language found.</CommandEmpty>
                                                                     <CommandGroup>
-                                                                        {languages?.map((language) => (
+                                                                        {languages?.filter(e => !!field.value.find(x => x.code === e.code))?.map((language) => (
                                                                             <CommandItem
                                                                                 value={language.name}
                                                                                 key={language.code}
@@ -336,11 +453,24 @@ export default function Signup() {
                                                                                 }}>
                                                                                 <Check
                                                                                     className={cn(
-                                                                                        "mr-2 h-4 w-4",
-                                                                                        field.value.find(x => x.code === language.code)
-                                                                                            ? "opacity-100"
-                                                                                            : "opacity-0"
-                                                                                    )}
+                                                                                        "mr-2 h-4 w-4 opacity-100")}
+                                                                                />
+                                                                                {language.name}
+                                                                            </CommandItem>
+                                                                        ))}
+                                                                        {languages?.filter(e => !field.value.find(x => x.code === e.code))?.map((language) => (
+                                                                            <CommandItem
+                                                                                value={language.name}
+                                                                                key={language.code}
+                                                                                onSelect={() => {
+                                                                                    let selectedLanguages = field.value
+                                                                                    const selectedIndex = selectedLanguages.findIndex(e => e.code === language.code)
+                                                                                    selectedIndex < 0 ? selectedLanguages.push(language) : selectedLanguages.splice(selectedIndex, 1)
+                                                                                    therapistSignUpForm.setValue("languages", selectedLanguages)
+                                                                                }}>
+                                                                                <Check
+                                                                                    className={cn(
+                                                                                        "mr-2 h-4 w-4 opacity-0")}
                                                                                 />
                                                                                 {language.name}
                                                                             </CommandItem>
@@ -350,9 +480,9 @@ export default function Signup() {
                                                             </Command>
                                                         </PopoverContent>
                                                     </Popover>
-                                                    <FormDescription>
+                                                    <div>
                                                         {field.value.map(e => <Badge key={`sel-${e.code}`} className="m-1">{e.name}</Badge>)}
-                                                    </FormDescription>
+                                                    </div>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
@@ -416,11 +546,16 @@ export default function Signup() {
                                         <FormField
                                             control={therapistSignUpForm.control}
                                             name="mphilOrPhd"
-                                            render={({ field }) => (
+                                            render={({ field: { value, onChange, ...field } }) => (
                                                 <FormItem>
                                                     <FormLabel>{"M.Phil/Ph.D Degree (If Applicable)"}</FormLabel>
                                                     <FormControl>
-                                                        <Input type="file" {...field} />
+                                                        <Input
+                                                            {...field}
+                                                            type="file"
+                                                            onChange={(event) =>
+                                                                onChange(event.target.files && event.target.files[0])
+                                                            } />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -429,11 +564,16 @@ export default function Signup() {
                                         <FormField
                                             control={therapistSignUpForm.control}
                                             name="rciLicense"
-                                            render={({ field }) => (
+                                            render={({ field: { value, onChange, ...field } }) => (
                                                 <FormItem>
                                                     <FormLabel>{"RCI License (If Applicable)"}</FormLabel>
                                                     <FormControl>
-                                                        <Input type="file" {...field} />
+                                                        <Input
+                                                            type="file"
+                                                            {...field}
+                                                            onChange={(event) =>
+                                                                onChange(event.target.files && event.target.files[0])
+                                                            } />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -442,11 +582,16 @@ export default function Signup() {
                                         <FormField
                                             control={therapistSignUpForm.control}
                                             name="degreeOrMarksheet"
-                                            render={({ field }) => (
+                                            render={({ field: { value, onChange, ...field } }) => (
                                                 <FormItem>
                                                     <FormLabel>{"Masters Degree/Marksheet"}</FormLabel>
                                                     <FormControl>
-                                                        <Input type="file" {...field} />
+                                                        <Input
+                                                            type="file"
+                                                            {...field}
+                                                            onChange={(event) =>
+                                                                onChange(event.target.files && event.target.files[0])
+                                                            } />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -455,11 +600,16 @@ export default function Signup() {
                                         <FormField
                                             control={therapistSignUpForm.control}
                                             name="otherCertifications"
-                                            render={({ field }) => (
+                                            render={({ field: { value, onChange, ...field } }) => (
                                                 <FormItem>
                                                     <FormLabel>{"Other Certifications ( if Applicable)"}</FormLabel>
                                                     <FormControl>
-                                                        <Input type="file" {...field} />
+                                                        <Input
+                                                            type="file"
+                                                            {...field}
+                                                            onChange={(event) =>
+                                                                onChange(event.target.files && event.target.files[0])
+                                                            } />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -468,11 +618,16 @@ export default function Signup() {
                                         <FormField
                                             control={therapistSignUpForm.control}
                                             name="workExpLetter"
-                                            render={({ field }) => (
+                                            render={({ field: { value, onChange, ...field } }) => (
                                                 <FormItem>
                                                     <FormLabel>{"Work Experience Letter"}</FormLabel>
                                                     <FormControl>
-                                                        <Input type="file" {...field} />
+                                                        <Input
+                                                            type="file"
+                                                            {...field}
+                                                            onChange={(event) =>
+                                                                onChange(event.target.files && event.target.files[0])
+                                                            } />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -481,7 +636,8 @@ export default function Signup() {
                                     </div>
                                 </CardContent>
                                 <CardFooter>
-                                    <Button type="submit" className="w-full">
+                                    <Button disabled={isCreatingAccount} type="submit" className="w-full">
+                                        <Loader2 className={`${isCreatingAccount ? 'block' : 'hidden'} mr-2 h-4 w-4 animate-spin `} />
                                         Register as Therapist
                                     </Button>
                                 </CardFooter>

@@ -64,3 +64,4 @@ class Utils {
   }
 }
 export const utils = new Utils()
+export const dayJs = dayjs
