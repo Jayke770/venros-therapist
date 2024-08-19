@@ -23,13 +23,17 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from 'zod'
-import { signIn } from 'next-auth/react'
+import { signIn, SignInResponse } from 'next-auth/react'
 import { Loader2 } from "lucide-react"
+import { toast } from "sonner"
+import { useRouter } from 'next/navigation'
+import { useNavigation } from 'react-day-picker'
 const loginFormSchema = z.object({
     email: z.string().email({ message: 'Email is invalid' }),
     password: z.string().min(8, { message: "Password is required" }),
 })
 export default function LoginForm() {
+    const router = useRouter()
     const [isSigningIn, setIsSigningIn] = useState<boolean>(false)
     const logninForm = useForm<z.infer<typeof loginFormSchema>>({
         resolver: zodResolver(loginFormSchema),
@@ -41,7 +45,22 @@ export default function LoginForm() {
     const onSubmitLoginForm = async (data: z.infer<typeof loginFormSchema>) => {
         try {
             setIsSigningIn(true)
-            const result = await signIn("credentials", { redirect: false, callbackUrl: undefined, ...data })
+            let redirect = false
+            const promise = () => new Promise<SignInResponse>((resolve, reject) => signIn("credentials", { redirect: false, callbackUrl: undefined, ...data }).then(e => e?.ok ? resolve(e) : reject()).catch(e => reject(e)));
+            toast.promise(promise, {
+                richColors: true,
+                dismissible: false,
+                loading: 'Please wait...',
+                success: () => {
+                    redirect = true
+                    return "Successfully logged In"
+                },
+                error: () => {
+                    redirect = false
+                    return "Failed to authenticate"
+                },
+                onDismiss: () => redirect && router.push("/dashboard", { scroll: false })
+            });
             setIsSigningIn(false)
         } catch (e) {
             console.log(e)
