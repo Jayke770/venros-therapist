@@ -11,6 +11,14 @@ const nextConfig = {
     ],
   },
   poweredByHeader: false,
+  rewrites: async () => {
+    return [
+      {
+        source: "/api/:path*",
+        destination: `${new URL(process.env.APP_BACKEND).toString()}api/:path*`,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

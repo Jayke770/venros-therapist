@@ -1,0 +1,23 @@
+{
+  "name": "backend",
+  "version": "1.0.50",
+  "scripts": {
+    "start": "bun run src/app.ts",
+    "dev": "bun run --watch src/app.ts",
+    "start-cluster": "bun run cluster.ts"
+  },
+  "dependencies": {
+    "@elysiajs/cookie": "^0.8.0",
+    "@elysiajs/cors": "^1.1.0",
+    "@elysiajs/jwt": "^1.1.0",
+    "@elysiajs/swagger": "^1.1.1",
+    "elysia": "latest",
+    "envalid": "^8.0.0",
+    "http-status-codes": "^2.3.0",
+    "mongoose": "^8.5.3"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "module": "src/app.js"
+}

@@ -1,5 +1,5 @@
 "use client"
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import {
     Card,
@@ -27,7 +27,7 @@ import { signIn, SignInResponse } from 'next-auth/react'
 import { Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { useRouter } from 'next/navigation'
-import { useNavigation } from 'react-day-picker'
+import authHandler from '@/lib/auth'
 const loginFormSchema = z.object({
     email: z.string().email({ message: 'Email is invalid' }),
     password: z.string().min(8, { message: "Password is required" }),
@@ -45,20 +45,27 @@ export default function LoginForm() {
     const onSubmitLoginForm = async (data: z.infer<typeof loginFormSchema>) => {
         try {
             setIsSigningIn(true)
-            let redirect = false
-            const promise = () => new Promise<SignInResponse>((resolve, reject) => signIn("credentials", { redirect: false, callbackUrl: undefined, ...data }).then(e => e?.ok && !e?.error ? resolve(e) : reject()).catch(e => reject(e)));
+            let redirect = false, error = "Failed to authenticate"
+            const promise = () => new Promise<string | undefined>((resolve, reject) => authHandler.signIn({ ...data }).then(e => {
+                if (e.status) resolve(e.message)
+                if (!e.status) {
+                    console.log(e)
+                    error = e.message || "Failed to authenticate"
+                    reject(e.message)
+                }
+            }));
             toast.promise(promise, {
                 richColors: true,
                 dismissible: false,
                 loading: 'Please wait...',
                 duration: 1000,
-                success: () => {
+                success: (e) => {
                     redirect = true
-                    return "Successfully logged In"
+                    return e
                 },
-                error: () => {
+                error: (e) => {
                     redirect = false
-                    return "Failed to authenticate"
+                    return error
                 },
                 onAutoClose: () => redirect && router.push("/dashboard", { scroll: false }),
                 onDismiss: () => redirect && router.push("/dashboard", { scroll: false })

@@ -16,7 +16,4 @@ const UserDataSchema = new Schema<IUserDataModel>(
         timestamps: true
     }
 )
-if (models['users'] != null) {
-    deleteModel("users");
-}
 export const UserData = model("users", UserDataSchema);
