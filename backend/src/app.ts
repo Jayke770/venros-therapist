@@ -1,14 +1,32 @@
 import { config } from '@/config'
-import { Elysia } from "elysia";
+import { Elysia, t } from "elysia";
 import { jwt } from '@elysiajs/jwt'
 import dbConnect from '@/models/dbConnect';
 import { swagger } from '@elysiajs/swagger'
 import authRoute from '@/routes/auth';
 import { cors } from '@elysiajs/cors'
 import { StatusCodes } from 'http-status-codes';
+import { helmet } from 'elysia-helmet';
 const app = new Elysia({ serve: { reusePort: true } })
   .use(cors({ origin: ["http://localhost:3000", "http://localhost:8000"], credentials: true }))
-  .use(jwt({ name: "jwt", secret: config.JWT_SECRET, exp: "30d" }))
+  .use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        "script-src": ["'self'", "cdn.jsdelivr.net"],
+      },
+    },
+  }))
+  .use(jwt({
+    name: "jwt", secret: config.JWT_SECRET, exp: "30d", schema: t.Object({
+      id: t.String(),
+      name: t.String(),
+      address: t.String(),
+      dob: t.Date(),
+      email: t.String(),
+      gender: t.String(),
+      userType: t.Union([t.Literal("user"), t.Literal("admin"), t.Literal("therapist")]),
+    })
+  }))
 app.use(
   swagger({
     path: "/",
@@ -36,8 +54,7 @@ app.use(
   })
 );
 app.onBeforeHandle({ as: "global" }, async ({ set, path, headers, jwt, cookie }) => {
-  ``
-  if (path.startsWith("/api") && path !== "/api/auth/signin") {
+  if (path.startsWith("/api") && !["/api/auth/signin", "/api/auth/signup", "/api/auth/test"].includes(path)) {
     const isValidAuth = await jwt.verify(cookie.auth.value)
     if (!isValidAuth) {
       set.status = StatusCodes.UNAUTHORIZED;

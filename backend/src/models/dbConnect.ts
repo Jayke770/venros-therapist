@@ -2,7 +2,7 @@
 import mongoose from "mongoose";
 import { config } from "@/config";
 const MONGODB_URI = process?.env?.MONGODB_URI;
-let cached = global.mongoose;
+let cached: { conn: mongoose.Mongoose, promise: mongoose.Mongoose } = global.mongoose;
 if (!cached) {
     cached = global.mongoose = { conn: null, promise: null };
 }

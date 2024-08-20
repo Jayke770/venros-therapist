@@ -12,9 +12,13 @@
     "@elysiajs/jwt": "^1.1.0",
     "@elysiajs/swagger": "^1.1.1",
     "elysia": "latest",
+    "elysia-helmet": "^2.0.0",
     "envalid": "^8.0.0",
     "http-status-codes": "^2.3.0",
-    "mongoose": "^8.5.3"
+    "mime": "^4.0.4",
+    "minio": "^8.0.1",
+    "mongoose": "^8.5.3",
+    "nanoid": "^5.0.7"
   },
   "devDependencies": {
     "bun-types": "latest"

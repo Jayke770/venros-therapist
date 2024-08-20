@@ -116,7 +116,7 @@ export default function SignupForm() {
         formData.append("type", type ?? "user")
         //@ts-ignore
         Object.keys(data).map(e => e === "languages" ? formData.append(e, JSON.stringify(data[e])) : formData.append(e, data[e]))
-        const promise = () => new Promise<{ status: boolean, message?: string }>((resolve, reject) => fetch("/api/auth/user", {
+        const promise = () => new Promise<{ status: boolean, message?: string }>((resolve, reject) => fetch("/api/auth/signup", {
             method: "post",
             body: formData
         })
