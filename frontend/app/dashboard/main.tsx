@@ -1,3 +1,4 @@
+"use client"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel } from "@/components/ui/dropdown-menu"
@@ -9,7 +10,9 @@ import { faker } from '@faker-js/faker'
 import Image from "next/image"
 import type { IAuthSession } from "@/types"
 import { FilterIcon } from "lucide-react"
-export default async function Dashboard(props: { session?: IAuthSession }) {
+import useTherapist from "@/hooks/useTherapist"
+export default function Dashboard(props: { session?: IAuthSession }) {
+    const { therapist, therapistLoading } = useTherapist() 
     return (
         <>
             <main className="flex-1">
@@ -57,12 +60,12 @@ export default async function Dashboard(props: { session?: IAuthSession }) {
                         </div>
                         {/* list of therapist */}
                         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                            {[...Array(12)].map((_, index) => (
-                                <Card key={index} className="group  bg-[#f1f1f1]">
+                            {therapist?.data.map(data => (
+                                <Card key={data.id} className="group  bg-[#f1f1f1]">
                                     <div className="relative h-60  overflow-hidden rounded-t-lg">
                                         <Image
                                             src={faker.image.urlLoremFlickr({ category: "doctors" })}
-                                            alt={`Therapist ${index + 1}`}
+                                            alt={data.name}
                                             width={400}
                                             height={300}
                                             loading="lazy"
@@ -73,7 +76,7 @@ export default async function Dashboard(props: { session?: IAuthSession }) {
                                     <CardContent className="p-4">
                                         <div className="flex flex-col items-start justify-between gap-2">
                                             <div>
-                                                <h3 className="text-lg font-semibold">{faker.person.fullName()}</h3>
+                                                <h3 className="text-lg font-semibold">{data?.name}</h3>
                                                 <p className="text-muted-foreground">Anxiety, Depression, Trauma</p>
                                             </div>
                                             <div className="text-sm line-clamp-3">
@@ -92,7 +95,7 @@ export default async function Dashboard(props: { session?: IAuthSession }) {
                                             <Button asChild variant={"outline"} className="w-full">
                                                 <Link
                                                     scroll={false}
-                                                    href={`/dashboard/user?id=${index}`}>
+                                                    href={`/dashboard/user?id=${data.id}`}>
                                                     View Profile
                                                 </Link>
                                             </Button>

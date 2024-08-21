@@ -83,6 +83,7 @@ router.post("/signup", async ({ body, jwt, cookie: { auth } }) => {
             languages: JSON.parse(signUpData.languages),
             name: signUpData.fullName,
             password: encryptedPassword,
+            pNumber: signUpData.pNumber,
             userType: signUpData.type,
             files: {},
             educationQualification: signUpData.educationQualification,

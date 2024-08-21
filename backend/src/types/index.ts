@@ -11,6 +11,7 @@ export interface IUserDataModel {
     email: string,
     password: string,
     gender: string,
+    pNumber: string,
     languages: ILanguages[],
     files: { [key: string]: string },
     positionApplying: string,

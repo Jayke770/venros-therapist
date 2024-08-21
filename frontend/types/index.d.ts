@@ -16,3 +16,15 @@ export interface IAuthenticate {
     status: boolean,
     message?: string
 }
+export interface ITherapist {
+    id: string
+    yrsOfExp: number
+    name: string
+    address: string
+    dob: Date
+    email: string
+    gender: "male" | "female" | "undisclosed"
+    languages: ILanguages[]
+    createdAt: Date
+    updatedAt: Date
+}

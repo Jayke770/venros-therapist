@@ -59,7 +59,7 @@ app.onBeforeHandle({ as: "global" }, async ({ set, path, headers, jwt, cookie })
     const isValidAuth = await jwt.verify(cookie.auth.value)
     if (!isValidAuth) {
       set.status = StatusCodes.UNAUTHORIZED
-      return { message: "hmmmmmmmm?" }
+      return { message: "hmmmmmmmm?", status: false }
     }
   }
 });

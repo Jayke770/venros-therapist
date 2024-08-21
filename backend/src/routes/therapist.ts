@@ -47,6 +47,7 @@ router.get("", async ({ query }) => {
                 yrsOfExp: t.Optional(t.Number()),
                 address: t.String(),
                 dob: t.Date(),
+                pNumber: t.Optional(t.String()),
                 email: t.String(),
                 gender: t.Union([t.Literal("male"), t.Literal("female"), t.Literal("undisclosed")]),
                 languages: t.Array(t.Object({ name: t.String(), code: t.String() })),
