@@ -26,7 +26,7 @@ import { z } from 'zod'
 import { Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { useRouter } from 'next/navigation'
-import authHandler from '@/lib/auth'
+import { authHandler } from '@/lib/auth'
 const loginFormSchema = z.object({
     email: z.string().email({ message: 'Email is invalid' }),
     password: z.string().min(8, { message: "Password is required" }),

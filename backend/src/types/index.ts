@@ -11,7 +11,11 @@ export interface IUserDataModel {
     email: string,
     password: string,
     gender: string,
-    languages: ILanguages[]
+    languages: ILanguages[],
+    files: { [key: string]: string },
+    positionApplying: string,
+    educationQualification: string,
+    yrsOfExp: number
 }
 export interface ISession {
     id: string,

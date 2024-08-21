@@ -11,6 +11,10 @@ const UserDataSchema = new Schema<IUserDataModel>(
         name: { type: String, required: true },
         password: { type: String, required: true },
         userType: { type: String, enum: ["user", "therapist", "admin"], default: 'user' },
+        files: {},
+        educationQualification: { type: String, default: null },
+        positionApplying: { type: String, default: null },
+        yrsOfExp: { type: Number, default: 0 }
     },
     {
         timestamps: true

@@ -1,19 +1,9 @@
 import { Elysia, t } from "elysia";
-import { StatusCodes, getReasonPhrase } from "http-status-codes";
 import { jwt } from '@elysiajs/jwt'
 import { config } from "@/config";
 import { ISession } from "@/types";
 import { UserData } from "@/models/collections";
-import * as Minio from 'minio'
-import { nanoid } from 'nanoid'
-import mime from 'mime';
-const minioClient = new Minio.Client({
-    endPoint: '127.0.0.1',
-    port: 9000,
-    useSSL: false,
-    accessKey: '151ncpMJEwIpIOOWVY1O',
-    secretKey: '23hcxQPR7hThEkJKmdcaq5YmD7ClbQ5cCIddB0uo'
-})
+import { storage } from "@/lib/storage";
 const router = new Elysia({ prefix: "/api/auth" })
     .use(jwt({
         name: "jwt",
@@ -93,6 +83,10 @@ router.post("/signup", async ({ body, jwt, cookie: { auth } }) => {
             name: signUpData.fullName,
             password: encryptedPassword,
             userType: signUpData.type,
+            files: {},
+            educationQualification: signUpData.educationQualification,
+            positionApplying: signUpData.positionApplying,
+            yrsOfExp: signUpData.yrsOfExp
         } : {
             email: signUpData.email.trim().toLowerCase(),
             gender: signUpData.gender,
@@ -100,6 +94,16 @@ router.post("/signup", async ({ body, jwt, cookie: { auth } }) => {
             password: encryptedPassword,
             userType: signUpData.type,
         })
+        if (signUpData.type === "therapist") {
+            let signUpFiles: { [key: string]: string } = {}
+            const filesMap = ["mphilOrPhd", "rciLicense", "degreeOrMarksheet", "workExpLetter", "workExpLetter"]
+            for (const key of filesMap) {
+                const file = await storage.uploadFile((signUpData as any)[key])
+                if (file?.status) signUpFiles[key] = file.fileId
+            }
+            newUser.files = signUpFiles
+            await newUser.save()
+        }
         auth.set({
             value: await jwt.sign({
                 id: newUser._id.toString(),
@@ -173,7 +177,13 @@ router.get("/user", async ({ jwt, cookie: { auth } }) => {
         if (!userData) return { status: false }
         return {
             status: true,
-            ...userData
+            id: userData._id.toString(),
+            address: userData.address,
+            dob: userData.dob,
+            email: userData.email,
+            gender: userData.gender,
+            name: userData.name,
+            userType: userData.userType
         }
     } catch (e) {
         return { status: false }
@@ -185,6 +195,7 @@ router.get("/user", async ({ jwt, cookie: { auth } }) => {
         "200": t.Object(
             {
                 status: t.Boolean(),
+                id: t.Optional(t.String()),
                 userType: t.Optional(t.Union([t.Literal("user"), t.Literal("admin"), t.Literal("therapist")])),
                 name: t.Optional(t.String()),
                 dob: t.Optional(t.Date()),
@@ -195,21 +206,10 @@ router.get("/user", async ({ jwt, cookie: { auth } }) => {
         ),
     },
 })
-router.post("/test", async ({ body }) => {
-    try {
-        const arrbuf = await body.file.arrayBuffer();
-        const buffer = Buffer.from(arrbuf);
-        const hhhh = await minioClient.presignedUrl("GET", "test", "Screenshot 2024-08-13 at 10.06.53 PM.png", 24 * 60 * 60)
-        // const objectName = `${nanoid(20)}.${mime.getExtension(body.file.type)}`
-        // const hhh = await minioClient.putObject("test", objectName, buffer)
-        console.log(hhhh)
-    } catch (e) {
-        console.log(e)
-    }
+router.get("/logout", async ({ cookie, redirect }) => {
+    cookie.auth.remove()
+    return redirect(config.FRONTEND_DOMAIN)
 }, {
-    type: "multipart/form-data",
-    body: t.Object({
-        file: t.File()
-    })
+    tags: ["Authentication"]
 })
 export default router

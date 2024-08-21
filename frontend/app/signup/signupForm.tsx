@@ -42,6 +42,7 @@ import useLanguages from "@/hooks/useLanguages"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { toast } from "sonner"
+import { authHandler } from "@/lib/auth"
 const therapistSignUpFormSchema = z.object({
     fullName: z.string().min(5, { message: "Invalid Full Name." }),
     dob: z.date({
@@ -116,14 +117,7 @@ export default function SignupForm() {
         formData.append("type", type ?? "user")
         //@ts-ignore
         Object.keys(data).map(e => e === "languages" ? formData.append(e, JSON.stringify(data[e])) : formData.append(e, data[e]))
-        const promise = () => new Promise<{ status: boolean, message?: string }>((resolve, reject) => fetch("/api/auth/signup", {
-            method: "post",
-            body: formData
-        })
-            .then(e => e.json())
-            .then((e: { status: boolean, message?: string }) => e?.status ? resolve(e) : reject(e.message))
-            .catch(e => reject("Failed to create acount"))
-        );
+        const promise = () => new Promise<{ status: boolean, message?: string }>((resolve, reject) => authHandler.signUp(formData).then(e => e?.status ? resolve(e) : reject(e.message)));
         toast.promise(promise, {
             richColors: true,
             dismissible: false,

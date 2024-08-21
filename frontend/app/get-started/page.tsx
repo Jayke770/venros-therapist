@@ -1,7 +1,7 @@
 import LoginForm from './loginForm'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
-import authHandler from '@/lib/auth'
+import { authHandler } from '@/lib/auth'
 export default async function GetStarted() {
     const cookieStore = cookies()
     const authCookie = cookieStore.get('auth')

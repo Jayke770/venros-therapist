@@ -3,12 +3,13 @@ import { Elysia, t } from "elysia";
 import { jwt } from '@elysiajs/jwt'
 import dbConnect from '@/models/dbConnect';
 import { swagger } from '@elysiajs/swagger'
-import authRoute from '@/routes/auth';
 import { cors } from '@elysiajs/cors'
 import { StatusCodes } from 'http-status-codes';
 import { helmet } from 'elysia-helmet';
+import authRoute from '@/routes/auth';
+import therapistRouter from '@/routes/therapist'
 const app = new Elysia({ serve: { reusePort: true } })
-  .use(cors({ origin: ["http://localhost:3000", "http://localhost:8000"], credentials: true }))
+  .use(cors({ origin: [config.FRONTEND_DOMAIN], credentials: true }))
   .use(helmet({
     contentSecurityPolicy: {
       directives: {
@@ -54,7 +55,7 @@ app.use(
   })
 );
 app.onBeforeHandle({ as: "global" }, async ({ set, path, headers, jwt, cookie }) => {
-  if (path.startsWith("/api") && !["/api/auth/signin", "/api/auth/signup", "/api/auth/test"].includes(path)) {
+  if (path.startsWith("/api") && !["/api/auth/signin", "/api/auth/signup", "/api/auth/logout"].includes(path)) {
     const isValidAuth = await jwt.verify(cookie.auth.value)
     if (!isValidAuth) {
       set.status = StatusCodes.UNAUTHORIZED;
@@ -62,6 +63,7 @@ app.onBeforeHandle({ as: "global" }, async ({ set, path, headers, jwt, cookie })
   }
 });
 app.use(authRoute)
+app.use(therapistRouter)
 app.onStart(async () => await dbConnect());
 app.listen(config.PORT, () => {
   console.log(

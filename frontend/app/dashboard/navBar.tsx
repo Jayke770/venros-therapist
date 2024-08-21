@@ -5,10 +5,11 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { MessageCircle, Sparkles, User } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { faker } from '@faker-js/faker'
-import { utils } from "@/lib/utils"
-export default async function NavBar(props: any) {
+import { cn, utils } from "@/lib/utils"
+import type { IAuthSession } from '@/types'
+export default async function NavBar(props: { session?: IAuthSession }) {
     return (
-        <header className="flex h-20 w-full shrink-0 items-center justify-between lg:justify-normal px-4 md:px-24">
+        <header className="flex h-20 w-full shrink-0 items-center justify-between lg:justify-normal px-4 md:px-24 border-b">
             <Link href="/dashboard" className="flex items-center justify-center">
                 <Sparkles className="h-6 w-6 mr-4" /> Company
                 <span className="sr-only">Toggle menu</span>
@@ -65,15 +66,25 @@ export default async function NavBar(props: any) {
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" className="rounded-full">
-                            <User className="w-7 h-7" />
+                            <Avatar>
+                                <AvatarImage src={undefined} alt={props?.session?.name} className=" object-cover" />
+                                <AvatarFallback>{props?.session?.name.substring(0, 1)}</AvatarFallback>
+                            </Avatar>
                             <span className="sr-only">Toggle Menu</span>
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem>My Account</DropdownMenuItem>
-                        <DropdownMenuItem>Settings</DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link href={`/dashboard/user?id=${props?.session?.id || ""}`}>
+                                My Account
+                            </Link>
+                        </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>Logout</DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link href={"/api/auth/logout"}>
+                                Logout
+                            </Link>
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
                 {/* <Sheet>
