@@ -44,6 +44,7 @@ router.post("/signin", async ({ jwt, body, cookie: { auth } }) => {
                 gender: user.gender,
                 userType: user.userType
             }),
+            expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
             httpOnly: true,
             sameSite: "lax"
         })
@@ -115,6 +116,7 @@ router.post("/signup", async ({ body, jwt, cookie: { auth } }) => {
                 userType: newUser.userType
             }),
             httpOnly: true,
+            expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
             sameSite: "lax"
         })
         return { status: true, message: "Account Successfully Created" }

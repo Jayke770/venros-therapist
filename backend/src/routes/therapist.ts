@@ -1,7 +1,6 @@
 import { Elysia, t } from "elysia";
 import { jwt } from '@elysiajs/jwt'
 import { config } from "@/config";
-import { ISession } from "@/types";
 import { UserData } from "@/models/collections";
 const router = new Elysia({ prefix: "/api/therapist" })
     .use(jwt({
@@ -34,6 +33,7 @@ router.get("", async ({ query }) => {
     }
 }, {
     tags: ["Therapist"],
+    detail: { security: [{ JWTAuth: [] }] },
     query: t.Object({
         skip: t.Number({ default: 0 }),
         limit: t.Number({ default: 20 })
