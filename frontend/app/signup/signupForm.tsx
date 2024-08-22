@@ -122,10 +122,16 @@ export default function SignupForm() {
             richColors: true,
             dismissible: false,
             loading: 'Creating Account...',
-            success: (data) => data.message,
-            error: (e) => e,
+            success: (data) => {
+                setCreatingAccount(false)
+                return data.message
+            },
+            error: (e) => {
+                setCreatingAccount(false)
+                return e
+            },
         });
-        setCreatingAccount(false)
+
     }
     return (
         <main className=" container flex justify-center items-center p-5 lg:py-10 lg:px-24">

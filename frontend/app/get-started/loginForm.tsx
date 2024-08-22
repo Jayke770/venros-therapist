@@ -60,21 +60,23 @@ export default function LoginForm() {
                 duration: 1000,
                 success: (e) => {
                     redirect = true
+                    setIsSigningIn(false)
                     return e
                 },
                 error: (e) => {
                     redirect = false
+                    setIsSigningIn(false)
                     return error
                 },
                 onAutoClose: () => redirect && router.push("/dashboard", { scroll: false }),
                 onDismiss: () => redirect && router.push("/dashboard", { scroll: false })
             });
-            setIsSigningIn(false)
         } catch (e) {
             console.log(e)
             setIsSigningIn(false)
         }
     }
+    console.log(isSigningIn)
     return (
         <Card className={"w-full lg:w-[400px] border-none shadow-none"}>
             <Form {...logninForm}>
