@@ -14,7 +14,7 @@ export default function BookTherapist() {
             <ResponsiveModalHeader>
                 <ResponsiveModalTitle>Book Therapist</ResponsiveModalTitle>
                 <ResponsiveModalDescription>
-                    Make changes to your profile here. Click save when you're done.
+                    {"Make changes to your profile here. Click save when you're done."}
                 </ResponsiveModalDescription>
             </ResponsiveModalHeader>
             <div className="grid gap-4 py-4">
