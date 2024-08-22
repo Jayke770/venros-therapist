@@ -16,7 +16,8 @@ export interface IUserDataModel {
     files: { [key: string]: string },
     positionApplying: string,
     educationQualification: string,
-    yrsOfExp: number
+    yrsOfExp: number,
+    therapistAccountStatus: "pending" | "activated" | null
 }
 export interface ISession {
     id: string,

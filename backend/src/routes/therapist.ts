@@ -21,7 +21,12 @@ const router = new Elysia({ prefix: "/api/therapist" })
 router.get("", async ({ query }) => {
     try {
         const therapist = await UserData.aggregate([
-            { $match: { userType: { $eq: "therapist" } } },
+            {
+                $match: {
+                    userType: { $eq: "therapist" },
+                    therapistAccountStatus: { $eq: "activated" }
+                }
+            },
             { $skip: query.skip },
             { $limit: query.limit },
             { $addFields: { id: "$_id" } },

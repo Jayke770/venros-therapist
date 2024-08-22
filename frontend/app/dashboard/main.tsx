@@ -9,12 +9,17 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { faker } from '@faker-js/faker'
 import Image from "next/image"
 import type { IAuthSession } from "@/types"
-import { FilterIcon } from "lucide-react"
+import { FilterIcon, Loader2 } from "lucide-react"
 import useTherapist from "@/hooks/useTherapist"
+import {
+    ResponsiveModal,
+    ResponsiveModalTrigger,
+} from '@/components/ui/responsive-modal';
+import BookTherapist from "./bookTherapist"
 export default function Dashboard(props: { session?: IAuthSession }) {
     const { therapist, therapistLoading } = useTherapist() 
     return (
-        <>
+        <ResponsiveModal>
             <main className="flex-1">
                 <section className="px-4 md:px-24 flex flex-col gap-5">
                     <div className="mt-4">
@@ -59,10 +64,15 @@ export default function Dashboard(props: { session?: IAuthSession }) {
                             </div>
                         </div>
                         {/* list of therapist */}
-                        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 min-h-[70dvh]">
+                            {therapistLoading && (
+                                <div className=" col-span-full flex justify-center items-center">
+                                    <Loader2 className="w-10 h-10 animate-spin" />
+                                </div>
+                            )}
                             {therapist?.data.map(data => (
-                                <Card key={data.id} className="group  bg-[#f1f1f1]">
-                                    <div className="relative h-60  overflow-hidden rounded-t-lg">
+                                <Card key={data.id} className="group bg-secondary ">
+                                    <div className="relative h-60 overflow-hidden rounded-t-lg">
                                         <Image
                                             src={faker.image.urlLoremFlickr({ category: "doctors" })}
                                             alt={data.name}
@@ -86,12 +96,11 @@ export default function Dashboard(props: { session?: IAuthSession }) {
                                     </CardContent>
                                     <CardFooter>
                                         <div className="w-full flex justify-between gap-2">
-                                            <Button asChild className="w-full">
-                                                <Link
-                                                    href="#" >
+                                            < ResponsiveModalTrigger asChild>
+                                                <Button className="w-full">
                                                     Book Now
-                                                </Link>
-                                            </Button>
+                                                </Button>
+                                            </ ResponsiveModalTrigger>
                                             <Button asChild variant={"outline"} className="w-full">
                                                 <Link
                                                     scroll={false}
@@ -121,7 +130,8 @@ export default function Dashboard(props: { session?: IAuthSession }) {
                     </Link>
                 </nav>
             </footer>
-        </>
+            <BookTherapist />
+        </ResponsiveModal>
     )
 }
 
