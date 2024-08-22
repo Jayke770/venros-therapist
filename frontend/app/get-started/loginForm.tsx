@@ -48,7 +48,6 @@ export default function LoginForm() {
             const promise = () => new Promise<string | undefined>((resolve, reject) => authHandler.signIn({ ...data }).then(e => {
                 if (e.status) resolve(e.message)
                 if (!e.status) {
-                    console.log(e)
                     error = e.message || "Failed to authenticate"
                     reject(e.message)
                 }
@@ -76,7 +75,6 @@ export default function LoginForm() {
             setIsSigningIn(false)
         }
     }
-    console.log(isSigningIn)
     return (
         <Card className={"w-full lg:w-[400px] border-none shadow-none"}>
             <Form {...logninForm}>
