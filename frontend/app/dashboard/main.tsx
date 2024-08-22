@@ -71,7 +71,7 @@ export default function Dashboard(props: { session?: IAuthSession }) {
                                 </div>
                             )}
                             {therapist?.data.map(data => (
-                                <Card key={data.id} className="group bg-secondary ">
+                                <Card key={data.id} className="group bg-secondary dark:bg-card ">
                                     <div className="relative h-60 overflow-hidden rounded-t-lg">
                                         <Image
                                             src={faker.image.urlLoremFlickr({ category: "doctors" })}

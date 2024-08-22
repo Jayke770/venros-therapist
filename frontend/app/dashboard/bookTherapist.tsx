@@ -40,7 +40,7 @@ export default function BookTherapist() {
                 </div>
             </div>
             <ResponsiveModalFooter>
-                <Button type="submit">Save changes</Button>
+                <Button>Book Now</Button>
             </ResponsiveModalFooter>
         </ResponsiveModalContent>
     )
