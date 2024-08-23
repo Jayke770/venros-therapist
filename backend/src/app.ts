@@ -10,13 +10,6 @@ import authRoute from '@/routes/auth';
 import therapistRouter from '@/routes/therapist'
 const app = new Elysia({ serve: { reusePort: true } })
   .use(cors({ origin: config.DOMAINS?.split(","), credentials: true }))
-  .use(helmet({
-    contentSecurityPolicy: {
-      directives: {
-        "script-src": ["'self'", "cdn.jsdelivr.net"],
-      },
-    },
-  }))
   .use(jwt({
     name: "jwt",
     secret: config.JWT_SECRET,
