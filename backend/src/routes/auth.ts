@@ -46,7 +46,7 @@ router.post("/signin", async ({ jwt, body, cookie: { auth } }) => {
             }),
             expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
             httpOnly: true,
-            sameSite: "lax"
+            sameSite: "lax", 
         })
         return { status: true, message: "Successfully logged In" }
     } catch (e) {
@@ -168,7 +168,6 @@ router.post("/signup", async ({ body, jwt, cookie: { auth } }) => {
 router.get("/user", async ({ jwt, cookie: { auth } }) => {
     try {
         const session: ISession | undefined | null = await jwt.verify(auth.value) as any
-        console.log("fasffs", session)
         if (!session) return { status: false }
         const userData = await UserData.findOne({ _id: { $eq: session.id } }, {
             address: 1,

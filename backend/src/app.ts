@@ -68,7 +68,7 @@ app.use(therapistRouter)
 app.onStart(async () => await dbConnect());
 app.listen(config.PORT, () => {
   console.log(
-    `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
+    `Server is running at ${app.server?.hostname}:${app.server?.port}`
   );
 })
 
