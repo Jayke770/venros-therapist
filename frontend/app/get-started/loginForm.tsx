@@ -46,7 +46,10 @@ export default function LoginForm() {
             setIsSigningIn(true)
             let redirect = false, error = "Failed to authenticate"
             const promise = () => new Promise<string | undefined>((resolve, reject) => authHandler.signIn({ ...data }).then(e => {
-                if (e.status) resolve(e.message)
+                if (e.status) {
+                    redirect = true
+                    resolve(e.message)
+                }
                 if (!e.status) {
                     error = e.message || "Failed to authenticate"
                     reject(e.message)
