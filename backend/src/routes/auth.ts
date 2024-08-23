@@ -167,7 +167,7 @@ router.post("/signup", async ({ body, jwt, cookie: { auth } }) => {
 })
 router.get("/user", async ({ jwt, cookie: { auth } }) => {
     try {
-        const session: ISession | undefined | null = await jwt.verify(auth.value) as any
+        const session = await jwt.verify(auth.value)
         if (!session) return { status: false }
         const userData = await UserData.findOne({ _id: { $eq: session.id } }, {
             address: 1,
