@@ -18,7 +18,10 @@ const app = new Elysia({ serve: { reusePort: true } })
     },
   }))
   .use(jwt({
-    name: "jwt", secret: config.JWT_SECRET, exp: "30d", schema: t.Object({
+    name: "jwt",
+    secret: config.JWT_SECRET,
+    exp: "30d",
+    schema: t.Object({
       id: t.String(),
       name: t.String(),
       address: t.String(),
