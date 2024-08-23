@@ -9,7 +9,7 @@ import { helmet } from 'elysia-helmet';
 import authRoute from '@/routes/auth';
 import therapistRouter from '@/routes/therapist'
 const app = new Elysia({ serve: { reusePort: true } })
-  .use(cors({ origin: [config.FRONTEND_DOMAIN], credentials: true }))
+  .use(cors({ origin: config.FRONTEND_DOMAIN?.split(","), credentials: true }))
   .use(helmet({
     contentSecurityPolicy: {
       directives: {
