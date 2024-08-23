@@ -47,7 +47,7 @@ router.post("/signin", async ({ jwt, body, cookie: { auth } }) => {
             domain: "venros-therapist",
             expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
             httpOnly: true,
-            sameSite: "lax", 
+            sameSite: "none"
         })
         return { status: true, message: "Successfully logged In" }
     } catch (e) {
