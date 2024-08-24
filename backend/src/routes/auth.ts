@@ -46,6 +46,7 @@ router.post("/signin", async ({ jwt, body, cookie: { auth } }) => {
             }),
             expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
             httpOnly: true,
+            domain: ".railway.app",
             sameSite: "lax"
         })
         return { status: true, message: "Successfully logged In" }
