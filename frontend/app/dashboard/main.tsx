@@ -11,15 +11,15 @@ import Image from "next/image"
 import type { IAuthSession } from "@/types"
 import { FilterIcon, Loader2 } from "lucide-react"
 import useTherapist from "@/hooks/useTherapist"
-import {
-    ResponsiveModal,
-    ResponsiveModalTrigger,
-} from '@/components/ui/responsive-modal';
+import { useMediaMatch } from 'rooks'
 import BookTherapist from "./bookTherapist"
+import { useState } from "react"
 export default function Dashboard(props: { session?: IAuthSession }) {
+    const [openBookTherapist, setIsOpenTherapist] = useState<boolean>(false)
     const { therapist, therapistLoading } = useTherapist() 
     return (
-        <ResponsiveModal>
+        <>
+            <BookTherapist isOpen={openBookTherapist} setIsOpen={setIsOpenTherapist} />
             <main className="flex-1">
                 <section className="px-4 md:px-24 flex flex-col gap-5">
                     <div className="mt-4">
@@ -96,11 +96,9 @@ export default function Dashboard(props: { session?: IAuthSession }) {
                                     </CardContent>
                                     <CardFooter>
                                         <div className="w-full flex justify-between gap-2">
-                                            < ResponsiveModalTrigger asChild>
-                                                <Button className="w-full">
-                                                    Book Now
-                                                </Button>
-                                            </ ResponsiveModalTrigger>
+                                            <Button className="w-full" onClick={() => setIsOpenTherapist(true)}>
+                                                Book Now
+                                            </Button>
                                             <Button asChild variant={"outline"} className="w-full">
                                                 <Link
                                                     scroll={false}
@@ -130,8 +128,8 @@ export default function Dashboard(props: { session?: IAuthSession }) {
                     </Link>
                 </nav>
             </footer>
-            <BookTherapist />
-        </ResponsiveModal>
+
+        </>
     )
 }
 
