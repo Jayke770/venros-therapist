@@ -9,6 +9,7 @@ import { helmet } from 'elysia-helmet';
 import authRoute from '@/routes/auth';
 import therapistRouter from '@/routes/therapist'
 const app = new Elysia({ serve: { reusePort: true } })
+  .use(cors({ origin: "*", credentials: true }))
   .use(jwt({
     name: "jwt",
     secret: config.JWT_SECRET,
