@@ -4,24 +4,11 @@ import { config } from "@/config";
 import { ISession } from "@/types";
 import { UserData } from "@/models/collections";
 import { storage } from "@/lib/storage";
+import { SignJWT, jwtVerify } from "jose";
 const router = new Elysia({ prefix: "/api/auth" })
-    .use(jwt({
-        name: "jwt",
-        secret: config.JWT_SECRET,
-        exp: "30d",
-        schema: t.Object({
-            id: t.String(),
-            name: t.String(),
-            address: t.String(),
-            dob: t.Date(),
-            email: t.String(),
-            gender: t.String(),
-            userType: t.Union([t.Literal("user"), t.Literal("admin"), t.Literal("therapist")]),
-        })
-    }))
-
-router.post("/signin", async ({ jwt, body, cookie: { auth } }) => {
+router.post("/signin", async ({ body, cookie: { auth } }) => {
     try {
+        const SECRET = new TextEncoder().encode(config.JWT_SECRET);
         const user = await UserData.findOne({ email: { $eq: body?.email } }, {
             email: 1,
             password: 1,
@@ -34,16 +21,20 @@ router.post("/signin", async ({ jwt, body, cookie: { auth } }) => {
         if (!user) return { status: false, message: "Invalid Email" }
         const isValidPassword = await Bun.password.verify(body.password, user.password, "bcrypt")
         if (!isValidPassword) return { status: false, message: "Invalid Password" }
+        let jwt = await new SignJWT({
+            id: user._id.toString(),
+            name: user.name,
+            address: user.address,
+            dob: user.dob,
+            email: user.email,
+            gender: user.gender,
+            userType: user.userType
+        })
+            .setProtectedHeader({ alg: "HS256" })
+            .setExpirationTime(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000))
+            .sign(SECRET)
         auth.set({
-            value: await jwt.sign({
-                id: user._id.toString(),
-                name: user.name,
-                address: user.address,
-                dob: user.dob,
-                email: user.email,
-                gender: user.gender,
-                userType: user.userType
-            }),
+            value: jwt,
             expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
             httpOnly: true,
             sameSite: "lax"
@@ -68,7 +59,7 @@ router.post("/signin", async ({ jwt, body, cookie: { auth } }) => {
         ),
     },
 })
-router.post("/signup", async ({ body, jwt, cookie: { auth } }) => {
+router.post("/signup", async ({ body, cookie: { auth } }) => {
     try {
         const signUpData = body
         if (signUpData.password !== signUpData.confirmPassword) return { status: false, message: "Password not match" }
@@ -165,10 +156,11 @@ router.post("/signup", async ({ body, jwt, cookie: { auth } }) => {
     },
 
 })
-router.get("/user", async ({ request, jwt, cookie: { auth } }) => {
+router.get("/user", async ({ request, cookie: { auth } }) => {
     try {
         const token = request.headers.get('apikey') ?? ""
-        const session = await jwt.verify(token)
+        const SECRET = new TextEncoder().encode(config.JWT_SECRET);
+        const session = (await jwtVerify<ISession>(token, SECRET)).payload
         if (!session) return { status: false, message: "Invalid JWT" }
         const userData = await UserData.findOne({ _id: { $eq: session.id } }, {
             address: 1,
@@ -190,6 +182,7 @@ router.get("/user", async ({ request, jwt, cookie: { auth } }) => {
             userType: userData.userType
         }
     } catch (e) {
+        console.log(e)
         return { status: false, message: "error" }
     }
 }, {
@@ -211,14 +204,16 @@ router.get("/user", async ({ request, jwt, cookie: { auth } }) => {
         ),
     },
 })
-router.get("/test", async ({ jwt, query }) => {
-    return await jwt.verify(query.token)
+router.get("/test", async ({ query }) => {
+    const SECRET = new TextEncoder().encode(config.JWT_SECRET);
+    const { payload: session } = await jwtDecrypt<ISession>(query.token!, SECRET)
+    return session
 }, {
     query: t.Object({
         token: t.String()
     })
 })
-router.get("/logout", async ({ jwt, cookie, redirect }) => {
+router.get("/logout", async ({ cookie, redirect }) => {
     cookie.auth.remove()
     return redirect(config.FRONTEND_DOMAIN)
 }, {

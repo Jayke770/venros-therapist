@@ -22,9 +22,9 @@ export interface IUserDataModel {
 export interface ISession {
     id: string,
     name: string
-    userType: "user" | "therapist" | "admin"
-    dob: Date,
-    address: string,
+    address: string
+    dob: Date
     email: string,
     gender: string,
+    userType: "user" | "therapist" | "admin"
 }

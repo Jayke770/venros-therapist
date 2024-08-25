@@ -8,22 +8,10 @@ import { StatusCodes } from 'http-status-codes';
 import { helmet } from 'elysia-helmet';
 import authRoute from '@/routes/auth';
 import therapistRouter from '@/routes/therapist'
+import { jwtVerify } from "jose";
+import { ISession } from './types';
 const app = new Elysia({ serve: { reusePort: true } })
   .use(cors({ origin: config.DOMAINS?.split(","), credentials: true }))
-  .use(jwt({
-    name: "jwt",
-    secret: config.JWT_SECRET,
-    exp: "30d",
-    schema: t.Object({
-      id: t.String(),
-      name: t.String(),
-      address: t.String(),
-      dob: t.Date(),
-      email: t.String(),
-      gender: t.String(),
-      userType: t.Union([t.Literal("user"), t.Literal("admin"), t.Literal("therapist")]),
-    })
-  }))
 app.use(
   swagger({
     path: "/",
@@ -50,11 +38,11 @@ app.use(
     },
   })
 );
-app.onBeforeHandle({ as: "global" }, async ({ request, set, path, headers, jwt, cookie }) => {
-  const token = request.headers.get('apikey') ?? ""
-  console.log("ffaf", token, await jwt.verify(token))
+app.onBeforeHandle({ as: "global" }, async ({ request, set, path, headers, cookie }) => {
+  const token = cookie.auth.value
+  const SECRET = new TextEncoder().encode(config.JWT_SECRET);
   if (path.startsWith("/api") && !["/api/auth/signin", "/api/auth/signup", "/api/auth/logout", "/api/auth/test"].includes(path)) {
-    const isValidAuth = await jwt.verify(token)
+    const isValidAuth = (await jwtVerify<ISession>(token!, SECRET)).payload
     if (!isValidAuth) {
       set.status = StatusCodes.UNAUTHORIZED
       return { message: "hmmmmmmmm?", status: false }
