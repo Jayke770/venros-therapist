@@ -71,13 +71,15 @@ export default function BookTherapist({ isOpen, setIsOpen }: { isOpen: boolean, 
             <form onSubmit={bookForm.handleSubmit(onSubmitBooking)}>
                 {isDesktop ? (
                     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                        <DialogHeader>
-                            <DialogTitle>Book Therapist</DialogTitle>
-                        </DialogHeader>
-                        <BookForm form={bookForm} />
-                        <DialogFooter>
-                            <Button>Book Now</Button>
-                        </DialogFooter>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Book Therapist</DialogTitle>
+                            </DialogHeader>
+                            <BookForm form={bookForm} />
+                            <DialogFooter>
+                                <Button>Book Now</Button>
+                            </DialogFooter>
+                        </DialogContent>
                     </Dialog>
                 ) : (
                     <Drawer open={isOpen} onOpenChange={setIsOpen}>
