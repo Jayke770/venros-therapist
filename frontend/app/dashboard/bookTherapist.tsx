@@ -19,7 +19,6 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
-import { useMediaMatch } from 'rooks'
 import {
     Dialog,
     DialogContent,
@@ -30,8 +29,9 @@ import {
     DialogFooter
 } from "@/components/ui/dialog"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm, UseFormReturn } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { z } from "zod"
+import useMediaQuery from "@/hooks/useMediaQuery";
 const bookFormSchema = z.object({
     username: z.string().min(2).max(50),
 })
@@ -68,7 +68,7 @@ const BookForm = () => {
     )
 }
 export default function BookTherapist({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: (e: boolean) => void }) {
-    const isDesktop = typeof window === "undefined" ? false : useMediaMatch("(min-width: 768px)")
+    const isDesktop = useMediaQuery("(min-width: 768px)")
     return (
         <>
             {isDesktop ? (
