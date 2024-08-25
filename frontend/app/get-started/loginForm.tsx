@@ -42,41 +42,40 @@ export default function LoginForm() {
         },
     })
     const onSubmitLoginForm = async (data: z.infer<typeof loginFormSchema>) => {
-        try {
-            setIsSigningIn(true)
-            let redirect = false, error = "Failed to authenticate"
-            const promise = () => new Promise<string | undefined>((resolve, reject) => authHandler.signIn({ ...data }).then(e => {
-                if (e.status) {
-                    redirect = true
-                    resolve(e.message)
-                }
-                if (!e.status) {
-                    error = e.message || "Failed to authenticate"
-                    reject(e.message)
-                }
-            }));
-            toast.promise(promise, {
-                richColors: true,
-                dismissible: false,
-                loading: 'Please wait...',
-                duration: 1000,
-                success: (e) => {
-                    redirect = true
-                    setIsSigningIn(false)
-                    return e
-                },
-                error: (e) => {
-                    redirect = false
-                    setIsSigningIn(false)
-                    return error
-                },
-                onAutoClose: () => redirect && router.push("/dashboard", { scroll: false }),
-                onDismiss: () => redirect && router.push("/dashboard", { scroll: false })
-            });
-        } catch (e) {
-            console.log(e)
-            setIsSigningIn(false)
-        }
+        setIsSigningIn(true)
+        let redirect = false, error = "Failed to authenticate"
+        const promise = () => new Promise<string | undefined>((resolve, reject) => authHandler.signIn({ ...data }).then(e => {
+            if (e.status) {
+                redirect = true
+                resolve(e.message)
+            }
+            if (!e.status) {
+                error = e.message || "Failed to authenticate"
+                reject(e.message)
+            }
+        }));
+        toast.promise(promise, {
+            richColors: true,
+            dismissible: false,
+            loading: 'Please wait...',
+            duration: 1000,
+            success: (e) => {
+                redirect = true
+                setIsSigningIn(false)
+                return e
+            },
+            error: (e) => {
+                redirect = false
+                setIsSigningIn(false)
+                return error
+            },
+            onAutoClose: () => {
+                if (redirect) router.push("/dashboard", { scroll: false })
+            },
+            onDismiss: () => {
+                if (redirect) router.push("/dashboard", { scroll: false })
+            }
+        });
     }
     return (
         <Card className={"w-full lg:w-[400px] border-none shadow-none"}>
