@@ -211,6 +211,13 @@ router.get("/user", async ({ request, jwt, cookie: { auth } }) => {
         ),
     },
 })
+router.get("/test", async ({ jwt, query }) => {
+    return await jwt.verify(query.token)
+}, {
+    query: t.Object({
+        token: t.String()
+    })
+})
 router.get("/logout", async ({ jwt, cookie, redirect }) => {
     cookie.auth.remove()
     return redirect(config.FRONTEND_DOMAIN)
