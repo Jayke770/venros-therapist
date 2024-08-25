@@ -10,6 +10,7 @@ import authRoute from '@/routes/auth';
 import therapistRouter from '@/routes/therapist'
 import { jwtVerify } from "jose";
 import { ISession } from './types';
+import { authHandler } from '@/lib/auth'
 const app = new Elysia({ serve: { reusePort: true } })
   .use(cors({ origin: config.DOMAINS?.split(","), credentials: true }))
 app.use(
@@ -39,10 +40,9 @@ app.use(
   })
 );
 app.onBeforeHandle({ as: "global" }, async ({ request, set, path, headers, cookie }) => {
-  const token = cookie.auth.value
-  const SECRET = new TextEncoder().encode(config.JWT_SECRET);
+  const token = cookie.auth.value ?? ""
   if (path.startsWith("/api") && !["/api/auth/signin", "/api/auth/signup", "/api/auth/logout", "/api/auth/test"].includes(path)) {
-    const isValidAuth = (await jwtVerify<ISession>(token!, SECRET)).payload
+    const isValidAuth = await authHandler.verifyJWT(token)
     if (!isValidAuth) {
       set.status = StatusCodes.UNAUTHORIZED
       return { message: "hmmmmmmmm?", status: false }

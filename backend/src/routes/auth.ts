@@ -4,11 +4,11 @@ import { config } from "@/config";
 import { ISession } from "@/types";
 import { UserData } from "@/models/collections";
 import { storage } from "@/lib/storage";
-import { SignJWT, jwtVerify } from "jose";
+import { authHandler } from '@/lib/auth'
 const router = new Elysia({ prefix: "/api/auth" })
+
 router.post("/signin", async ({ body, cookie: { auth } }) => {
     try {
-        const SECRET = new TextEncoder().encode(config.JWT_SECRET);
         const user = await UserData.findOne({ email: { $eq: body?.email } }, {
             email: 1,
             password: 1,
@@ -21,20 +21,16 @@ router.post("/signin", async ({ body, cookie: { auth } }) => {
         if (!user) return { status: false, message: "Invalid Email" }
         const isValidPassword = await Bun.password.verify(body.password, user.password, "bcrypt")
         if (!isValidPassword) return { status: false, message: "Invalid Password" }
-        let jwt = await new SignJWT({
-            id: user._id.toString(),
-            name: user.name,
-            address: user.address,
-            dob: user.dob,
-            email: user.email,
-            gender: user.gender,
-            userType: user.userType
-        })
-            .setProtectedHeader({ alg: "HS256" })
-            .setExpirationTime(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000))
-            .sign(SECRET)
         auth.set({
-            value: jwt,
+            value: await authHandler.signJWT({
+                id: user._id.toString(),
+                name: user.name,
+                address: user.address,
+                dob: user.dob,
+                email: user.email,
+                gender: user.gender,
+                userType: user.userType
+            }),
             expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
             httpOnly: true,
             sameSite: "lax"
@@ -98,19 +94,15 @@ router.post("/signup", async ({ body, cookie: { auth } }) => {
             newUser.files = signUpFiles
             await newUser.save()
         }
-        let jwt = await new SignJWT({
-            id: newUser._id.toString(),
-            name: newUser.name,
-            address: newUser.address,
-            dob: newUser.dob,
-            email: newUser.email,
-            gender: newUser.gender,
-        })
-            .setProtectedHeader({ alg: "HS256" })
-            .setExpirationTime(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000))
-            .sign(SECRET)
         auth.set({
-            value: jwt,
+            value: await authHandler.signJWT({
+                id: newUser._id.toString(),
+                name: newUser.name,
+                address: newUser.address,
+                dob: newUser.dob,
+                email: newUser.email,
+                gender: newUser.gender,
+            }),
             httpOnly: true,
             expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
             sameSite: "lax"
@@ -160,11 +152,10 @@ router.post("/signup", async ({ body, cookie: { auth } }) => {
     },
 
 })
-router.get("/user", async ({ request, cookie: { auth } }) => {
+router.get("/user", async ({ request, cookie }) => {
     try {
-        const token = request.headers.get('apikey') ?? ""
-        const SECRET = new TextEncoder().encode(config.JWT_SECRET);
-        const session = (await jwtVerify<ISession>(token, SECRET)).payload
+        const token = cookie.auth.value ?? ""
+        const session = await authHandler.verifyJWT(token)
         if (!session) return { status: false, message: "Invalid JWT" }
         const userData = await UserData.findOne({ _id: { $eq: session.id } }, {
             address: 1,
@@ -207,15 +198,6 @@ router.get("/user", async ({ request, cookie: { auth } }) => {
             }
         ),
     },
-})
-router.get("/test", async ({ query }) => {
-    const SECRET = new TextEncoder().encode(config.JWT_SECRET);
-    const { payload: session } = await jwtDecrypt<ISession>(query.token!, SECRET)
-    return session
-}, {
-    query: t.Object({
-        token: t.String()
-    })
 })
 router.get("/logout", async ({ cookie, redirect }) => {
     cookie.auth.remove()
