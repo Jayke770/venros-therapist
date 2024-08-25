@@ -1,3 +1,4 @@
+"use client"
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -69,7 +70,7 @@ export default function BookTherapist({ isOpen, setIsOpen }: { isOpen: boolean, 
         <Form {...bookForm}>
             <form onSubmit={bookForm.handleSubmit(onSubmitBooking)}>
                 {isDesktop ? (
-                    <Dialog>
+                    <Dialog open={isOpen} onOpenChange={setIsOpen}>
                         <DialogHeader>
                             <DialogTitle>Book Therapist</DialogTitle>
                         </DialogHeader>
