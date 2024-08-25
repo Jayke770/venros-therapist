@@ -5,7 +5,7 @@ class Handler {
         try {
             const req = await fetch(`${this.HOST}api/auth/user`, {
                 headers: {
-                    cookie: `${cookie?.name}=${cookie?.value};`
+                    apiKey: `${cookie?.value}`
                 }
             })
             if (!req.ok) return undefined

@@ -52,8 +52,7 @@ app.use(
 );
 app.onBeforeHandle({ as: "global" }, async ({ set, path, headers, jwt, cookie }) => {
   if (path.startsWith("/api") && !["/api/auth/signin", "/api/auth/signup", "/api/auth/logout"].includes(path)) {
-    const isValidAuth = await jwt.verify(cookie.auth.value)
-    console.log("faf", isValidAuth, cookie.auth.value)
+    const isValidAuth = await jwt.verify(headers?.apiKey)
     if (!isValidAuth) {
       set.status = StatusCodes.UNAUTHORIZED
       return { message: "hmmmmmmmm?", status: false }
