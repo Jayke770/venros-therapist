@@ -61,6 +61,7 @@ router.post("/signin", async ({ body, cookie: { auth } }) => {
 })
 router.post("/signup", async ({ body, cookie: { auth } }) => {
     try {
+        const SECRET = new TextEncoder().encode(config.JWT_SECRET);
         const signUpData = body
         if (signUpData.password !== signUpData.confirmPassword) return { status: false, message: "Password not match" }
         const emailAlreadytaken = await UserData.findOne({ email: { $eq: signUpData.email.trim().toLowerCase() } })
@@ -97,16 +98,19 @@ router.post("/signup", async ({ body, cookie: { auth } }) => {
             newUser.files = signUpFiles
             await newUser.save()
         }
+        let jwt = await new SignJWT({
+            id: newUser._id.toString(),
+            name: newUser.name,
+            address: newUser.address,
+            dob: newUser.dob,
+            email: newUser.email,
+            gender: newUser.gender,
+        })
+            .setProtectedHeader({ alg: "HS256" })
+            .setExpirationTime(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000))
+            .sign(SECRET)
         auth.set({
-            value: await jwt.sign({
-                id: newUser._id.toString(),
-                name: newUser.name,
-                address: newUser.address,
-                dob: newUser.dob,
-                email: newUser.email,
-                gender: newUser.gender,
-                userType: newUser.userType
-            }),
+            value: jwt,
             httpOnly: true,
             expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
             sameSite: "lax"
