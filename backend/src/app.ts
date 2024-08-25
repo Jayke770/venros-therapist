@@ -50,8 +50,8 @@ app.use(
     },
   })
 );
-app.onBeforeHandle({ as: "global" }, async ({ set, path, headers, jwt, cookie: { auth } }) => {
-  const token = headers?.apiKey
+app.onBeforeHandle({ as: "global" }, async ({ request, set, path, headers, jwt, cookie }) => {
+  const token = request.headers.get('apikey') ?? cookie.auth.value?.toString() ?? ""
   console.log("ffaf", token, await jwt.verify(token))
   if (path.startsWith("/api") && !["/api/auth/signin", "/api/auth/signup", "/api/auth/logout"].includes(path)) {
     const isValidAuth = await jwt.verify(token)

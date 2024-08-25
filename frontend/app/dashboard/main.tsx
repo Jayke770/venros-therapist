@@ -70,7 +70,7 @@ export default function Dashboard(props: { session?: IAuthSession }) {
                                     <Loader2 className="w-10 h-10 animate-spin" />
                                 </div>
                             )}
-                            {therapist?.data.map(data => (
+                            {therapist?.data?.map(data => (
                                 <Card key={data.id} className="group bg-secondary dark:bg-card ">
                                     <div className="relative h-60 overflow-hidden rounded-t-lg">
                                         <Image

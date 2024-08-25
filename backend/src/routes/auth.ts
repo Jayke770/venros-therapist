@@ -165,9 +165,9 @@ router.post("/signup", async ({ body, jwt, cookie: { auth } }) => {
     },
 
 })
-router.get("/user", async ({ jwt, cookie: { auth } }) => {
+router.get("/user", async ({ request, jwt, cookie: { auth } }) => {
     try {
-        const token = auth.value
+        const token = request.headers.get('apikey') ?? ""
         const session = await jwt.verify(token)
         if (!session) return { status: false, message: "Invalid JWT" }
         const userData = await UserData.findOne({ _id: { $eq: session.id } }, {
