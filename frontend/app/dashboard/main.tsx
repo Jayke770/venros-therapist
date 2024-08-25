@@ -96,7 +96,7 @@ export default function Dashboard(props: { session?: IAuthSession }) {
                                     </CardContent>
                                     <CardFooter>
                                         <div className="w-full flex justify-between gap-2">
-                                            <Button className="w-full" onClick={() => setIsOpenTherapist(true)}>
+                                            <Button type="button" role="button" className="w-full" onClick={() => setIsOpenTherapist(true)}>
                                                 Book Now
                                             </Button>
                                             <Button asChild variant={"outline"} className="w-full">
