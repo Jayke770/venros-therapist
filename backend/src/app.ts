@@ -5,14 +5,20 @@ import dbConnect from '@/models/dbConnect';
 import { swagger } from '@elysiajs/swagger'
 import { cors } from '@elysiajs/cors'
 import { StatusCodes } from 'http-status-codes';
-import { helmet } from 'elysia-helmet';
 import authRoute from '@/routes/auth';
 import therapistRouter from '@/routes/therapist'
-import { jwtVerify } from "jose";
-import { ISession } from './types';
 import { authHandler } from '@/lib/auth'
+import { helmet } from 'elysia-helmet';
+
 const app = new Elysia({ serve: { reusePort: true } })
   .use(cors({ origin: config.DOMAINS?.split(","), credentials: true }))
+  .use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        "script-src": ["'self'", "cdn.jsdelivr.net"],
+      },
+    },
+  }))
 app.use(
   swagger({
     path: "/",
@@ -39,7 +45,7 @@ app.use(
     },
   })
 );
-app.onBeforeHandle({ as: "global" }, async ({ request, set, path, headers, cookie }) => {
+app.onBeforeHandle({ as: "global" }, async ({ set, path, cookie }) => {
   const token = cookie.auth.value ?? ""
   if (path.startsWith("/api") && !["/api/auth/signin", "/api/auth/signup", "/api/auth/logout", "/api/auth/test"].includes(path)) {
     const isValidAuth = await authHandler.verifyJWT(token)
