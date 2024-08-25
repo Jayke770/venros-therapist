@@ -50,9 +50,10 @@ app.use(
     },
   })
 );
-app.onBeforeHandle({ as: "global" }, async ({ set, path, headers, jwt, cookie }) => {
+app.onBeforeHandle({ as: "global" }, async ({ set, path, headers, jwt, cookie: { auth } }) => {
+  const token = auth.value
   if (path.startsWith("/api") && !["/api/auth/signin", "/api/auth/signup", "/api/auth/logout"].includes(path)) {
-    const isValidAuth = await jwt.verify(headers?.apiKey)
+    const isValidAuth = await jwt.verify(token)
     if (!isValidAuth) {
       set.status = StatusCodes.UNAUTHORIZED
       return { message: "hmmmmmmmm?", status: false }

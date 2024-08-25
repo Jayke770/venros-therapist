@@ -46,9 +46,7 @@ router.post("/signin", async ({ jwt, body, cookie: { auth } }) => {
             }),
             expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
             httpOnly: true,
-            sameSite: "none",
-            secure: false,
-            path: "/"
+            sameSite: "lax"
         })
         return { status: true, message: "Successfully logged In" }
     } catch (e) {
@@ -167,10 +165,11 @@ router.post("/signup", async ({ body, jwt, cookie: { auth } }) => {
     },
 
 })
-router.get("/user", async ({ jwt, headers }) => {
+router.get("/user", async ({ jwt, cookie: { auth } }) => {
     try {
-        const session = await jwt.verify(headers?.apiKey)
-        if (!session) return { status: false }
+        const token = auth.value
+        const session = await jwt.verify(token)
+        if (!session) return { status: false, message: "Invalid JWT" }
         const userData = await UserData.findOne({ _id: { $eq: session.id } }, {
             address: 1,
             dob: 1,
@@ -179,7 +178,7 @@ router.get("/user", async ({ jwt, headers }) => {
             userType: 1,
             name: 1
         })
-        if (!userData) return { status: false }
+        if (!userData) return { status: false, message: "Invalid User" }
         return {
             status: true,
             id: userData._id.toString(),
@@ -191,7 +190,7 @@ router.get("/user", async ({ jwt, headers }) => {
             userType: userData.userType
         }
     } catch (e) {
-        return { status: false }
+        return { status: false, message: "error" }
     }
 }, {
     tags: ["Authentication"],
@@ -200,6 +199,7 @@ router.get("/user", async ({ jwt, headers }) => {
         "200": t.Object(
             {
                 status: t.Boolean(),
+                message: t.Optional(t.String()),
                 id: t.Optional(t.String()),
                 userType: t.Optional(t.Union([t.Literal("user"), t.Literal("admin"), t.Literal("therapist")])),
                 name: t.Optional(t.String()),
@@ -211,7 +211,7 @@ router.get("/user", async ({ jwt, headers }) => {
         ),
     },
 })
-router.get("/logout", async ({ cookie, redirect }) => {
+router.get("/logout", async ({ jwt, cookie, redirect }) => {
     cookie.auth.remove()
     return redirect(config.FRONTEND_DOMAIN)
 }, {
