@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { faker } from '@faker-js/faker'
 import { cn, utils } from "@/lib/utils"
 import type { IAuthSession } from '@/types'
+import { ThemeSwitch } from '@/components/ui/theme-provider'
 export default async function NavBar(props: { session?: IAuthSession }) {
     return (
         <header className="flex h-20 w-full shrink-0 items-center justify-between lg:justify-normal px-4 md:px-24 border-b">
@@ -80,6 +81,9 @@ export default async function NavBar(props: { session?: IAuthSession }) {
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
+                        <DropdownMenuItem>
+                            <ThemeSwitch />
+                        </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                             <Link href={"/api/auth/logout"}>
                                 Logout
