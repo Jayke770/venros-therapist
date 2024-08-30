@@ -74,6 +74,7 @@ export default function Dashboard(props: { session?: IAuthSession }) {
                                 <Card key={data.id} className="group bg-secondary dark:bg-card ">
                                     <div className="relative h-60 overflow-hidden rounded-t-lg">
                                         <Image
+                                            unoptimized
                                             src={faker.image.urlLoremFlickr({ category: "doctors" })}
                                             alt={data.name}
                                             width={400}
