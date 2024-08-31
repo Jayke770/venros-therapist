@@ -38,7 +38,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarIcon } from "lucide-react";
 import { cn, dayJs } from "@/lib/utils";
 const bookFormSchema = z.object({
-    service: z.string().min(1),
+    service: z.string({ required_error: "Invalid Service" }).min(1),
     bookDate: z.date({ required_error: "Invalid Date" }),
     bookTime: z.string({ required_error: "Invalid Time Slot" }).min(1),
 })

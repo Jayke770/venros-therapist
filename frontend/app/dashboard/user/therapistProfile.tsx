@@ -1,3 +1,4 @@
+"use client"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -15,7 +16,14 @@ import {
 } from "@/components/ui/card"
 import { cn, utils } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
-export default async function UserProfile() {
+import type { IAuthSession } from "@/types"
+import useGetUser from "@/hooks/useGetUser"
+export default function TherapistProfile(props: {
+    session?: IAuthSession,
+    userId: string | undefined,
+    isOwner: boolean
+}) {
+    const { userData, userDataLoading } = useGetUser(props?.userId)
     return (
         <main className=" px-4 lg:px-24 py-3 ">
             <div
@@ -35,18 +43,25 @@ export default async function UserProfile() {
                             </Avatar>
                         </div>
                         <div className="flex flex-col justify-end items-center lg:items-start px-4 h-full">
-                            <h1 className="text-2xl font-bold text-center">Dr. {faker.person.fullName()}</h1>
-                            <p className="text-muted-foreground text-center">Clinical Psychologist</p>
+                            <h1 className="text-2xl font-bold text-center">{props?.session?.name}</h1>
+                            <p className="text-muted-foreground text-center">N/A</p>
                         </div>
                     </div>
                     <div className="flex gap-2 justify-center items-end">
-                        <Button variant={"outline"}>
-                            <CalendarCheck className="mr-2 h-4 w-4" />
-                            Book Now
-                        </Button>
-                        <Button variant={"outline"}>
-                            <MessageCircle className="mr-2 h-4 w-4" />Message
-                        </Button>
+                        {props?.isOwner ? (
+                            <>
+                            </>
+                        ) : (
+                            <>
+                                <Button variant={"outline"}>
+                                    <CalendarCheck className="mr-2 h-4 w-4" />
+                                    Book Now
+                                </Button>
+                                <Button variant={"outline"}>
+                                    <MessageCircle className="mr-2 h-4 w-4" />Message
+                                </Button>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
@@ -63,7 +78,7 @@ export default async function UserProfile() {
                                 <div className="space-y-1">
                                     <div className="flex items-center gap-2">
                                         <MailIcon className="w-5 h-5 text-muted-foreground" />
-                                        <span>johndoe@example.com</span>
+                                        <span>{props?.session?.email}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <PhoneIcon className="w-5 h-5 text-muted-foreground" />

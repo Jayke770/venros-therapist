@@ -18,6 +18,7 @@ export interface IUserDataModel {
     educationQualification: string,
     yrsOfExp: number,
     therapistAccountStatus: "pending" | "activated" | null
+    bio?: string
 }
 export interface ISession {
     id: string,

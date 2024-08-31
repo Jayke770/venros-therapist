@@ -44,5 +44,16 @@ class Handler {
             return { status: false }
         }
     }
+    async getUser(id: string): Promise<any> {
+        try {
+            const req = await fetch(`${this.HOST}api/users?id=${id}`)
+            if (!req.ok) return { status: false }
+            const res: IAuthenticate = await req.json()
+            if (!res?.status) return res
+            return res
+        } catch (e) {
+            return { status: false }
+        }
+    }
 }
 export const authHandler = new Handler()
