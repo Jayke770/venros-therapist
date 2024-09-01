@@ -67,8 +67,8 @@ const BookForm = ({ isDesktop }: { isDesktop: boolean }) => {
 
     return (
         <Form {...bookForm}>
-            <form onSubmit={bookForm.handleSubmit(onSubmitBooking)} className="p-4">
-                <div className="flex flex-col gap-2  mb-4">
+            <form onSubmit={bookForm.handleSubmit(onSubmitBooking)}>
+                <div className="flex flex-col gap-2  mb-4 px-4 pt-4">
                     <FormField
                         control={bookForm.control}
                         name="service"
