@@ -75,7 +75,8 @@ router.get("", async ({ query, cookie }) => {
                     userType: 0,
                     _id: 0,
                     __v: 0,
-                    therapistAccountStatus: 0
+                    therapistAccountStatus: 0, 
+                    
                 }
             }
         ])
