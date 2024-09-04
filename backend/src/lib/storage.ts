@@ -2,14 +2,19 @@ import * as Minio from 'minio'
 import { config } from '@/config'
 import { nanoid } from 'nanoid'
 import mime from 'mime'
-interface IUpload {
+import { UTApi } from "uploadthing/server";
+export const utapi = new UTApi({
+    apiKey: config.UPLOADTHING_SECRET
+});
+export interface IUpload {
     status: true,
     fileId: string
 }
-interface IGetFileUrl {
+export interface IGetFileUrl {
     status: true,
     fileUrl: string
 }
+
 class Storage {
     private readonly getFileExpiry = 30 * 24 * 60 * 60
     private readonly bucketName = config.MINIO_BUCKET_NAME

@@ -16,7 +16,9 @@ const UserDataSchema = new Schema<IUserDataModel>(
         educationQualification: { type: String, default: null },
         positionApplying: { type: String, default: null },
         yrsOfExp: { type: Number, default: 0 },
-        bio: { type: String, default: null }
+        bio: { type: String, default: null },
+        pNumber: { type: String },
+
     },
     {
         timestamps: true

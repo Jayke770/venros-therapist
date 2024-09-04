@@ -13,7 +13,7 @@ export interface IUserDataModel {
     gender: string,
     pNumber: string,
     languages: ILanguages[],
-    files: { [key: string]: string },
+    files: { [key: string]: string | undefined },
     positionApplying: string,
     educationQualification: string,
     yrsOfExp: number,

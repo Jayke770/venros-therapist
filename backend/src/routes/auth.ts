@@ -3,10 +3,9 @@ import { jwt } from '@elysiajs/jwt'
 import { config } from "@/config";
 import { ISession } from "@/types";
 import { UserData } from "@/models/collections";
-import { storage } from "@/lib/storage";
+import { storage, utapi } from "@/lib/storage";
 import { authHandler } from '@/lib/auth'
 const router = new Elysia({ prefix: "/api/auth" })
-
 router.post("/signin", async ({ body, cookie: { auth } }) => {
     try {
         const user = await UserData.findOne({ email: { $eq: body?.email } }, {
@@ -55,9 +54,8 @@ router.post("/signin", async ({ body, cookie: { auth } }) => {
         ),
     },
 })
-router.post("/signup", async ({ body, cookie: { auth } }) => {
+router.post("/signup", async ({ request, body, cookie: { auth } }) => {
     try {
-        const SECRET = new TextEncoder().encode(config.JWT_SECRET);
         const signUpData = body
         if (signUpData.password !== signUpData.confirmPassword) return { status: false, message: "Password not match" }
         const emailAlreadytaken = await UserData.findOne({ email: { $eq: signUpData.email.trim().toLowerCase() } })
@@ -85,13 +83,15 @@ router.post("/signup", async ({ body, cookie: { auth } }) => {
             userType: signUpData.type,
         })
         if (signUpData.type === "therapist") {
-            let signUpFiles: { [key: string]: string } = {}
+            let signUpFiles: { [key: string]: string | undefined } = {}
             const filesMap = ["mphilOrPhd", "rciLicense", "degreeOrMarksheet", "workExpLetter", "workExpLetter"]
             for (const key of filesMap) {
-                const file = await storage.uploadFile((signUpData as any)[key])
-                if (file?.status) signUpFiles[key] = file.fileId
+                if ((signUpData as any)[key]) {
+                    const [file] = await utapi.uploadFiles([(signUpData as any)[key]], { acl: "public-read" })
+                    if (file) signUpFiles[key] = file.data?.key
+                }
             }
-            newUser.files = signUpFiles
+            newUser.files = signUpFiles 
             await newUser.save()
         }
         auth.set({

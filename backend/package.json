@@ -22,7 +22,8 @@
     "minio": "^8.0.1",
     "mongoose": "^8.5.3",
     "nanoid": "^5.0.7",
-    "piscina": "^4.6.1"
+    "piscina": "^4.6.1",
+    "uploadthing": "^6.13.2"
   },
   "devDependencies": {
     "bun-types": "latest"

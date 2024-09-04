@@ -9,5 +9,7 @@ export const config = envalid.cleanEnv(process.env, {
     MINIO_PORT: envalid.num(),
     MINIO_ACCESSKEY: envalid.str(),
     MINIO_SECRETKEY: envalid.str(),
-    MINIO_BUCKET_NAME: envalid.str()
+    MINIO_BUCKET_NAME: envalid.str(),
+    UPLOADTHING_SECRET: envalid.str(),
+    UPLOADTHING_APP_ID: envalid.str()
 })

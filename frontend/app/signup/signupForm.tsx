@@ -115,8 +115,15 @@ export default function SignupForm() {
         setCreatingAccount(true)
         let formData = new FormData()
         formData.append("type", type ?? "user")
-        //@ts-ignore
-        Object.keys(data).map(e => e === "languages" ? formData.append(e, JSON.stringify(data[e])) : formData.append(e, data[e]))
+        Object.keys(data).map(e => {
+            if (e === "languages") {
+                //@ts-ignore
+                formData.append(e, JSON.stringify(data[e]))
+            } else {
+                //@ts-ignore
+                if (data[e]) formData.append(e, data[e])
+            }
+        }) 
         const promise = () => new Promise<{ status: boolean, message?: string }>((resolve, reject) => authHandler.signUp(formData).then(e => e?.status ? resolve(e) : reject(e.message)));
         toast.promise(promise, {
             richColors: true,
