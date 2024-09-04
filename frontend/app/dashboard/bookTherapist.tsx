@@ -63,7 +63,7 @@ const BookForm = ({ isDesktop }: { isDesktop: boolean }) => {
             console.log(value, name, type)
         )
         return () => subscription.unsubscribe()
-    }, [])
+    }, [bookForm])
 
     return (
         <Form {...bookForm}>
