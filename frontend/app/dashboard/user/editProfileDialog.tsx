@@ -59,6 +59,7 @@ import {
     ResponsiveModalTitle,
     ResponsiveModalTrigger,
 } from '@/components/ui/responsive-modal';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 const editProfileSchema = z.object({
     profilePicture: z.array(z.custom<File>()).optional(),
     coverPhoto: z.array(z.custom<File>()).optional(),
@@ -83,143 +84,155 @@ export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, se
     function onSubmitEditProfile(values: z.infer<typeof editProfileSchema>) {
         console.log(values)
     }
-    console.log(profileForm.getValues())
     return (
         <ResponsiveModal open={isOpen} onOpenChange={setIsOpen}>
             <ResponsiveModalContent className=" p-0">
-                <ResponsiveModalHeader className="p-4">
-                    <ResponsiveModalTitle className="text-xl">Edit Profile</ResponsiveModalTitle>
+                <ResponsiveModalHeader className="px-4 pt-4 pb-3">
+                    <ResponsiveModalTitle className="text-xl">Edit Profile & Schedules</ResponsiveModalTitle>
                 </ResponsiveModalHeader>
-                <Form {...profileForm}>
-                    <form
-                        onSubmit={profileForm.handleSubmit(onSubmitEditProfile)}
-                        className="flex flex-col">
-                        <ScrollArea className=" max-h-[70vh] flex flex-col gap-3 px-5 pt-5">
-                            <FormField
-                                control={profileForm.control}
-                                name="profilePicture"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Profile Picture</FormLabel>
-                                        <FormControl>
-                                            <div className="flex flex-col justify-center items-center">
-                                                <FileUploader
-                                                    className={cn(field.value?.[0] && "hidden")}
-                                                    dropzoneOptions={dropzoneConfig}
-                                                    value={field.value as any}
-                                                    onValueChange={field.onChange}
-                                                >
-                                                    <FileInput>
-                                                        <div className="flex flex-col items-center rounded-md justify-center min-h-40 border bg-background p-4">
-                                                            <ImagePlus />
-                                                            <p className="mb-1 mt-3 text-sm text-gray-500 dark:text-gray-400">
-                                                                <span className="font-semibold">Click to upload</span>
-                                                                &nbsp; or drag and drop
-                                                            </p>
-                                                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                                                                {"*.jpg, *.jpeg, *.png"}
-                                                            </p>
-                                                        </div>
-                                                    </FileInput>
-                                                </FileUploader>
-                                                {field.value?.[0] && (
-                                                    <div className="relative">
-                                                        <Button
-                                                            onClick={() => field.onChange(null)}
-                                                            size={"icon"}
-                                                            className="rounded-full absolute right-0">
-                                                            <X className="w-5 h-5" />
-                                                        </Button>
-                                                        <Image
-                                                            src={URL.createObjectURL(field.value[0])}
-                                                            alt={field.value[0].name}
-                                                            height={400}
-                                                            width={400}
-                                                            className="size-40 p-0 rounded-full"
-                                                            style={{ aspectRatio: "400/300", objectFit: "cover" }}
-                                                        />
+                <Tabs defaultValue="profile" className=" transition-all">
+                    <div className="px-5 w-full">
+                        <TabsList className="grid w-full grid-cols-2">
+                            <TabsTrigger value="profile">Profile</TabsTrigger>
+                            <TabsTrigger value="schedules">Schedules</TabsTrigger>
+                        </TabsList>
+                    </div>
+                    <TabsContent value="profile">
+                        <Form {...profileForm}>
+                            <form
+                                onSubmit={profileForm.handleSubmit(onSubmitEditProfile)}
+                                className="flex flex-col">
+                                <ScrollArea className=" max-h-[70vh] flex flex-col gap-3 px-5">
+                                    <FormField
+                                        control={profileForm.control}
+                                        name="profilePicture"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Profile Picture</FormLabel>
+                                                <FormControl>
+                                                    <div className="flex flex-col justify-center items-center">
+                                                        <FileUploader
+                                                            className={cn(field.value?.[0] && "hidden")}
+                                                            dropzoneOptions={dropzoneConfig}
+                                                            value={field.value as any}
+                                                            onValueChange={field.onChange}
+                                                        >
+                                                            <FileInput>
+                                                                <div className="flex flex-col items-center rounded-md justify-center min-h-40 border bg-background p-4">
+                                                                    <ImagePlus />
+                                                                    <p className="mb-1 mt-3 text-sm text-gray-500 dark:text-gray-400">
+                                                                        <span className="font-semibold">Click to upload</span>
+                                                                        &nbsp; or drag and drop
+                                                                    </p>
+                                                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                                        {"*.jpg, *.jpeg, *.png"}
+                                                                    </p>
+                                                                </div>
+                                                            </FileInput>
+                                                        </FileUploader>
+                                                        {field.value?.[0] && (
+                                                            <div className="relative">
+                                                                <Button
+                                                                    onClick={() => field.onChange(null)}
+                                                                    size={"icon"}
+                                                                    className="rounded-full absolute right-0">
+                                                                    <X className="w-5 h-5" />
+                                                                </Button>
+                                                                <Image
+                                                                    src={URL.createObjectURL(field.value[0])}
+                                                                    alt={field.value[0].name}
+                                                                    height={400}
+                                                                    width={400}
+                                                                    className="size-40 p-0 rounded-full"
+                                                                    style={{ aspectRatio: "400/300", objectFit: "cover" }}
+                                                                />
+                                                            </div>
+                                                        )}
                                                     </div>
-                                                )}
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={profileForm.control}
-                                name="coverPhoto"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Cover Photo</FormLabel>
-                                        <FormControl>
-                                            <div className="flex flex-col justify-center items-center">
-                                                <FileUploader
-                                                    className={cn(field.value?.[0] && "hidden")}
-                                                    dropzoneOptions={dropzoneConfig}
-                                                    value={field.value as any}
-                                                    onValueChange={field.onChange}
-                                                >
-                                                    <FileInput>
-                                                        <div className="flex flex-col items-center rounded-md justify-center min-h-40 border bg-background p-4">
-                                                            <ImagePlus />
-                                                            <p className="mb-1 mt-3 text-sm text-gray-500 dark:text-gray-400">
-                                                                <span className="font-semibold">Click to upload</span>
-                                                                &nbsp; or drag and drop
-                                                            </p>
-                                                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                                                                {"*.jpg, *.jpeg, *.png"}
-                                                            </p>
-                                                        </div>
-                                                    </FileInput>
-                                                </FileUploader>
-                                                {field.value?.[0] && (
-                                                    <div className="relative w-full">
-                                                        <Button
-                                                            onClick={() => field.onChange(null)}
-                                                            size={"icon"}
-                                                            className="rounded-full absolute right-1 -top-2">
-                                                            <X className="w-5 h-5" />
-                                                        </Button>
-                                                        <Image
-                                                            src={URL.createObjectURL(field.value[0])}
-                                                            alt={field.value[0].name}
-                                                            height={400}
-                                                            width={400}
-                                                            className="h-40 w-full p-0 rounded-md"
-                                                            style={{ aspectRatio: "400/300", objectFit: "cover" }}
-                                                        />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={profileForm.control}
+                                        name="coverPhoto"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Cover Photo</FormLabel>
+                                                <FormControl>
+                                                    <div className="flex flex-col justify-center items-center">
+                                                        <FileUploader
+                                                            className={cn(field.value?.[0] && "hidden")}
+                                                            dropzoneOptions={dropzoneConfig}
+                                                            value={field.value as any}
+                                                            onValueChange={field.onChange}
+                                                        >
+                                                            <FileInput>
+                                                                <div className="flex flex-col items-center rounded-md justify-center min-h-40 border bg-background p-4">
+                                                                    <ImagePlus />
+                                                                    <p className="mb-1 mt-3 text-sm text-gray-500 dark:text-gray-400">
+                                                                        <span className="font-semibold">Click to upload</span>
+                                                                        &nbsp; or drag and drop
+                                                                    </p>
+                                                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                                        {"*.jpg, *.jpeg, *.png"}
+                                                                    </p>
+                                                                </div>
+                                                            </FileInput>
+                                                        </FileUploader>
+                                                        {field.value?.[0] && (
+                                                            <div className="relative w-full">
+                                                                <Button
+                                                                    onClick={() => field.onChange(null)}
+                                                                    size={"icon"}
+                                                                    className="rounded-full absolute right-1 -top-2">
+                                                                    <X className="w-5 h-5" />
+                                                                </Button>
+                                                                <Image
+                                                                    src={URL.createObjectURL(field.value[0])}
+                                                                    alt={field.value[0].name}
+                                                                    height={400}
+                                                                    width={400}
+                                                                    className="h-40 w-full p-0 rounded-md"
+                                                                    style={{ aspectRatio: "400/300", objectFit: "cover" }}
+                                                                />
+                                                            </div>
+                                                        )}
                                                     </div>
-                                                )}
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={profileForm.control}
-                                name="bio"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Bioj</FormLabel>
-                                        <FormControl>
-                                            <Textarea
-                                                {...field}
-                                                className=" resize-none !ring-0 focus:border-foreground"
-                                                placeholder="Bio"
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </ScrollArea>
-                        <div className="px-5 pb-5 mt-3 w-full">
-                            <Button className="w-full" type="submit">Save Changes</Button>
-                        </div>
-                    </form>
-                </Form>
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={profileForm.control}
+                                        name="bio"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Bio</FormLabel>
+                                                <FormControl>
+                                                    <Textarea
+                                                        {...field}
+                                                        className=" resize-none !ring-0 focus:border-foreground"
+                                                        placeholder="Bio"
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </ScrollArea>
+                                <div className="px-5 pb-5 mt-3 w-full">
+                                    <Button className="w-full" type="submit">Save Changes</Button>
+                                </div>
+                            </form>
+                        </Form>
+                    </TabsContent>
+                    <TabsContent value="schedules">
+
+                    </TabsContent>
+                </Tabs>
             </ResponsiveModalContent>
         </ResponsiveModal>
     )

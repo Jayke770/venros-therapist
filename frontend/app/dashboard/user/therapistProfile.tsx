@@ -68,7 +68,7 @@ export default function TherapistProfile(props: {
                                     <Button
                                         onClick={() => onToggleEditProfile(true)}>
                                         <Pencil className="mr-2 h-4 w-4" />
-                                        Edit Profile
+                                        Edit
                                     </Button>
                                 </>
                             ) : (
