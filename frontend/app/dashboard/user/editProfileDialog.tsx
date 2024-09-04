@@ -102,7 +102,7 @@ export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, se
                             <form
                                 onSubmit={profileForm.handleSubmit(onSubmitEditProfile)}
                                 className="flex flex-col">
-                                <ScrollArea className=" max-h-[70vh] flex flex-col gap-3 px-5">
+                                <ScrollArea className=" max-h-[60dvh] flex flex-col gap-3 px-5">
                                     <FormField
                                         control={profileForm.control}
                                         name="profilePicture"
