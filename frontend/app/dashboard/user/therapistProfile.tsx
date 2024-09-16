@@ -18,7 +18,7 @@ import { cn, utils } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import type { IAuthSession } from "@/types"
 import useGetUser from "@/hooks/useGetUser"
-import EditProfile from "./editProfileDialog"
+import EditProfile from "./editTherapistProfile"
 import { useCallback, useState } from "react"
 export default function TherapistProfile(props: {
     session?: IAuthSession,
@@ -98,7 +98,7 @@ export default function TherapistProfile(props: {
                                     <div className="space-y-1">
                                         <div className="flex items-center gap-2">
                                             <MailIcon className="w-5 h-5 text-muted-foreground" />
-                                            <span>{props?.session?.email}</span>
+                                            <span className="break-all">{props?.session?.email}</span>
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <PhoneIcon className="w-5 h-5 text-muted-foreground" />

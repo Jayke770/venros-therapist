@@ -87,7 +87,7 @@ router.post("/signup", async ({ request, body, cookie: { auth } }) => {
             const filesMap = ["mphilOrPhd", "rciLicense", "degreeOrMarksheet", "workExpLetter", "workExpLetter"]
             for (const key of filesMap) {
                 if ((signUpData as any)[key]) {
-                    const [file] = await utapi.uploadFiles([(signUpData as any)[key]], { acl: "public-read" })
+                    const file = await utapi.uploadFiles((signUpData as any)[key], { acl: "public-read" })
                     if (file) signUpFiles[key] = file.data?.key
                 }
             }

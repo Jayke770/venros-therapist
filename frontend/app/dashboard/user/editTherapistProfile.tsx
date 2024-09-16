@@ -37,7 +37,7 @@ import useMediaQuery from "@/hooks/useMediaQuery";
 import { Calendar } from "@/components/ui/calendar"
 import { Select, SelectContent, SelectItem, SelectLabel, SelectTrigger, SelectValue, SelectGroup } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, CameraIcon, ImagePlus, X } from "lucide-react";
+import { CalendarIcon, CameraIcon, ImagePlus, X, ChevronsUpDown, Check, PlusCircle, ChevronRight, ChevronLeft } from "lucide-react";
 import { cn, dayJs } from "@/lib/utils";
 import { faker, fi } from "@faker-js/faker";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -60,10 +60,22 @@ import {
     ResponsiveModalTrigger,
 } from '@/components/ui/responsive-modal';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from "@/components/ui/command"
+import { motion } from 'framer-motion'
 const editProfileSchema = z.object({
     profilePicture: z.array(z.custom<File>()).optional(),
     coverPhoto: z.array(z.custom<File>()).optional(),
     bio: z.string().max(200).optional()
+})
+const editScheduleSchema = z.object({
+
 })
 const dropzoneConfig = {
     accept: {
@@ -73,7 +85,17 @@ const dropzoneConfig = {
     maxFiles: 2,
     maxSize: 5 * 1024 * 1024,
 } satisfies DropzoneOptions;
-
+const scheduleTypes = ['daily', 'weekly']
+const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+const timeSlots = Array.from({ length: 11 }, (_, i) => {
+    const hour = i + 8 // Start from 8 AM
+    const amPm = hour < 12 ? 'AM' : 'PM'
+    const hour12 = hour > 12 ? hour - 12 : hour
+    return `${hour12}:00 ${amPm}`
+})
+type Availability = {
+    [key: string]: boolean[]
+}
 export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: (e: boolean) => void }) {
     const profileForm = useForm<z.infer<typeof editProfileSchema>>({
         resolver: zodResolver(editProfileSchema),
@@ -81,12 +103,26 @@ export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, se
 
         },
     })
+    const [currentWeek, setCurrentWeek] = useState(0)
+    const [availability, setAvailability] = useState<Availability>({})
+    const startDate = dateFns.startOfWeek(dateFns.addWeeks(new Date(), currentWeek))
+    const endDate = dateFns.addDays(startDate, 6)
+    const toggleSlot = (day: string, slotIndex: number) => {
+        setAvailability(prev => {
+            const key = `${currentWeek}-${day}`
+            const dayAvailability = prev[key] || Array(timeSlots.length).fill(false)
+            const updatedDayAvailability = [...dayAvailability]
+            updatedDayAvailability[slotIndex] = !updatedDayAvailability[slotIndex]
+            return { ...prev, [key]: updatedDayAvailability }
+        })
+    }
     function onSubmitEditProfile(values: z.infer<typeof editProfileSchema>) {
         console.log(values)
     }
+    console.log(availability)
     return (
         <ResponsiveModal open={isOpen} onOpenChange={setIsOpen}>
-            <ResponsiveModalContent className=" p-0">
+            <ResponsiveModalContent className=" p-0 max-h-[90dvh]">
                 <ResponsiveModalHeader className="px-4 pt-4 pb-3">
                     <ResponsiveModalTitle className="text-xl">Edit Profile & Schedules</ResponsiveModalTitle>
                 </ResponsiveModalHeader>
@@ -230,10 +266,64 @@ export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, se
                         </Form>
                     </TabsContent>
                     <TabsContent value="schedules">
-
+                        <ScrollArea className=" max-h-[60dvh] flex flex-col gap-3 px-5">
+                            <div className="flex flex-col gap-0.5 md:gap-2">
+                                <div className=" sticky top-0 z-10 bg-background">
+                                    <div className="flex space-x-2 mb-2">
+                                        <Button
+                                            variant="outline"
+                                            size="icon"
+                                            onClick={() => setCurrentWeek(prev => Math.max(0, prev - 1))}
+                                            disabled={currentWeek === 0}
+                                        >
+                                            <ChevronLeft className="h-4 w-4" />
+                                        </Button>
+                                        <div className="text-sm font-medium grid w-full place-items-center">
+                                            {dateFns.format(startDate, 'MMM d')} - {dateFns.format(endDate, 'MMM d, yyyy')}
+                                        </div>
+                                        <Button
+                                            variant="outline"
+                                            size="icon"
+                                            onClick={() => setCurrentWeek(prev => Math.min(3, prev + 1))}
+                                            disabled={currentWeek === 3}
+                                        >
+                                            <ChevronRight className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                    <div className="grid grid-cols-8 text-xs place-items-center">
+                                        <div className="font-bold text-center">Time</div>
+                                        {daysOfWeek.map(day => (
+                                            <div key={day} className="font-bold text-center">{day.slice(0, 3)}</div>
+                                        ))}
+                                    </div>
+                                </div>
+                                {timeSlots.map((time, timeIndex) => (
+                                    <div key={time} className="grid grid-cols-8 gap-1 lg:gap-2 text-xs place-items-center">
+                                        <div className="py-1 text-xs text-center lg:whitespace-nowrap">{time}</div>
+                                        {daysOfWeek.map(day => {
+                                            const key = `${currentWeek}-${day}`
+                                            const isAvailable = availability[key]?.[timeIndex]
+                                            return (
+                                                <motion.button
+                                                    key={`${day}-${time}`}
+                                                    className={`w-full h-8 lg:h-10 rounded-md ${isAvailable ? 'bg-lime-500' : 'bg-zinc-300'} hover:opacity-80 transition-opacity`}
+                                                    onClick={() => toggleSlot(day, timeIndex)}
+                                                    aria-label={`Toggle availability for ${day} at ${time}`}
+                                                    whileHover={{ scale: 1 }}
+                                                    whileTap={{ scale: 0.8 }}
+                                                />
+                                            )
+                                        })}
+                                    </div>
+                                ))}
+                            </div>
+                        </ScrollArea>
+                        <div className=" w-full mt-3 px-4 pb-3">
+                            <Button className="w-full" >Save Availability</Button>
+                        </div>
                     </TabsContent>
                 </Tabs>
             </ResponsiveModalContent>
-        </ResponsiveModal>
+        </ResponsiveModal >
     )
 }

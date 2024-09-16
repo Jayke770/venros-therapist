@@ -38,7 +38,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarIcon } from "lucide-react";
 import { cn, dayJs } from "@/lib/utils";
 const bookFormSchema = z.object({
-    service: z.string({ required_error: "Invalid Service" }).min(1),
     bookDate: z.date({ required_error: "Invalid Date" }),
     bookTime: z.string({ required_error: "Invalid Time Slot" }).min(1),
 })
@@ -50,7 +49,6 @@ const BookForm = ({ isDesktop }: { isDesktop: boolean }) => {
     const bookForm = useForm<z.infer<typeof bookFormSchema>>({
         resolver: zodResolver(bookFormSchema),
         defaultValues: {
-            service: "",
             bookDate: undefined,
             bookTime: undefined
         },
@@ -69,28 +67,6 @@ const BookForm = ({ isDesktop }: { isDesktop: boolean }) => {
         <Form {...bookForm}>
             <form onSubmit={bookForm.handleSubmit(onSubmitBooking)}>
                 <div className="flex flex-col gap-2  mb-4 px-4 pt-4">
-                    <FormField
-                        control={bookForm.control}
-                        name="service"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Service</FormLabel>
-                                <FormControl>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <SelectTrigger id="service">
-                                            <SelectValue placeholder="Select a service" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="trauma">Trauma</SelectItem>
-                                            <SelectItem value="depression">Depression</SelectItem>
-                                            <SelectItem value="anxiety">Anxiety</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
                     <div className="grid gap-2 md:grid-cols-2">
                         <FormField
                             control={bookForm.control}
