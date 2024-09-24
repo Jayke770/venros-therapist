@@ -302,6 +302,7 @@ export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, se
                                         <div className="py-1 text-xs text-center lg:whitespace-nowrap">{time}</div>
                                         {daysOfWeek.map(day => {
                                             const key = `${currentWeek}-${day}`
+                                            console.log(key)
                                             const isAvailable = availability[key]?.[timeIndex]
                                             return (
                                                 <motion.button
