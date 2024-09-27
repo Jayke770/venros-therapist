@@ -28,7 +28,6 @@ export default function TherapistProfile(props: {
     const [toggleEditProfile, setToggleEditProfile] = useState<boolean>(false)
     const { userData, userDataLoading } = useGetUser(props?.userId)
     const onToggleEditProfile = (e: boolean) => setToggleEditProfile(e)
-    console.log("fsfafs", toggleEditProfile)
     return (
         <>
             <main className=" px-4 lg:px-24 py-3 ">

@@ -85,8 +85,6 @@ const dropzoneConfig = {
     maxFiles: 2,
     maxSize: 5 * 1024 * 1024,
 } satisfies DropzoneOptions;
-const scheduleTypes = ['daily', 'weekly']
-const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 const timeSlots = Array.from({ length: 11 }, (_, i) => {
     const hour = i + 8 // Start from 8 AM
     const amPm = hour < 12 ? 'AM' : 'PM'
@@ -94,7 +92,13 @@ const timeSlots = Array.from({ length: 11 }, (_, i) => {
     return `${hour12}:00 ${amPm}`
 })
 type Availability = {
-    [key: string]: boolean[]
+    [key: string]: {
+        startDate: Date,
+        endDate: Date,
+        slots: {
+            dateAndTime: Date
+        }[]
+    }
 }
 export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: (e: boolean) => void }) {
     const profileForm = useForm<z.infer<typeof editProfileSchema>>({
@@ -103,18 +107,54 @@ export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, se
 
         },
     })
-    const [currentWeek, setCurrentWeek] = useState(0)
+    const [currentDate, setCurrentDate] = useState(new Date())
     const [availability, setAvailability] = useState<Availability>({})
-    const startDate = dateFns.startOfWeek(dateFns.addWeeks(new Date(), currentWeek))
-    const endDate = dateFns.addDays(startDate, 6)
-    const toggleSlot = (day: string, slotIndex: number) => {
+    const toggleSlot = (day: Date, slotIndex: number) => {
+        const weekKey = dateFns.format(dateFns.startOfWeek(day), 'yyyy-MM-dd')
+        const slotTime = dateFns.setHours(dateFns.setMinutes(day, 0), slotIndex + 8)
         setAvailability(prev => {
-            const key = `${currentWeek}-${day}`
-            const dayAvailability = prev[key] || Array(timeSlots.length).fill(false)
-            const updatedDayAvailability = [...dayAvailability]
-            updatedDayAvailability[slotIndex] = !updatedDayAvailability[slotIndex]
-            return { ...prev, [key]: updatedDayAvailability }
+            const weekAvailability = prev[weekKey] || {
+                startDate: dateFns.startOfWeek(day),
+                endDate: dateFns.endOfWeek(day),
+                slots: []
+            }
+
+            const slotExists = weekAvailability.slots.some(slot =>
+                dateFns.isSameDay(slot.dateAndTime, slotTime) && slot.dateAndTime.getHours() === slotTime.getHours()
+            )
+
+            if (slotExists) {
+                return {
+                    ...prev,
+                    [weekKey]: {
+                        ...weekAvailability,
+                        slots: weekAvailability.slots.filter(slot =>
+                            !(dateFns.isSameDay(slot.dateAndTime, slotTime) && slot.dateAndTime.getHours() === slotTime.getHours())
+                        )
+                    }
+                }
+            } else {
+                return {
+                    ...prev,
+                    [weekKey]: {
+                        ...weekAvailability,
+                        slots: [...weekAvailability.slots, { dateAndTime: slotTime }]
+                    }
+                }
+            }
         })
+    }
+    const isSlotDisabled = (day: Date, slotIndex: number) => {
+        const currentTime = new Date()
+        const slotTime = dateFns.setHours(dateFns.setMinutes(day, 0), slotIndex + 8)
+        return dateFns.isBefore(slotTime, currentTime) || (dateFns.isSameDay(slotTime, currentTime) && dateFns.isBefore(slotTime, currentTime))
+    }
+    const isSlotAvailable = (day: Date, slotIndex: number) => {
+        const weekKey = dateFns.format(dateFns.startOfWeek(day), 'yyyy-MM-dd')
+        const slotTime = dateFns.setHours(dateFns.setMinutes(day, 0), slotIndex + 8)
+        return availability[weekKey]?.slots.some(slot =>
+            dateFns.isSameDay(slot.dateAndTime, slotTime) && slot.dateAndTime.getHours() === slotTime.getHours()
+        ) || false
     }
     function onSubmitEditProfile(values: z.infer<typeof editProfileSchema>) {
         console.log(values)
@@ -267,7 +307,7 @@ export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, se
                     </TabsContent>
                     <TabsContent value="schedules">
                         <ScrollArea className=" max-h-[60dvh] flex flex-col gap-3 px-5">
-                            <div className="flex flex-col gap-0.5 md:gap-2">
+                            {/* <div className="flex flex-col gap-0.5 md:gap-2">
                                 <div className=" sticky top-0 z-10 bg-background">
                                     <div className="flex space-x-2 mb-2">
                                         <Button
@@ -301,12 +341,17 @@ export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, se
                                     <div key={time} className="grid grid-cols-8 gap-1 lg:gap-2 text-xs place-items-center">
                                         <div className="py-1 text-xs text-center lg:whitespace-nowrap">{time}</div>
                                         {daysOfWeek.map(day => {
-                                            const key = `${currentWeek}-${day}`
-                                            console.log(key)
-                                            const isAvailable = availability[key]?.[timeIndex]
+                                            const key = `week-${currentWeek}`
+                                            const startDate = dateFns.startOfWeek(dateFns.addWeeks(new Date(), currentWeek))
+                                            const dayIndex = daysOfWeek.indexOf(day)
+                                            const slotDate = dateFns.addDays(startDate, dayIndex)
+                                            const slotTime = dateFns.setHours(dateFns.setMinutes(slotDate, 0), timeIndex + 8)
+                                            const isAvailable = false
                                             return (
                                                 <motion.button
                                                     key={`${day}-${time}`}
+                                                    f={slotTime}
+                                                    h={availability[key]?.slots[0].dateAndTime ?? "f"}
                                                     className={`w-full h-8 lg:h-10 rounded-md ${isAvailable ? 'bg-lime-500' : 'bg-zinc-300'} hover:opacity-80 transition-opacity`}
                                                     onClick={() => toggleSlot(day, timeIndex)}
                                                     aria-label={`Toggle availability for ${day} at ${time}`}
@@ -317,6 +362,53 @@ export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, se
                                         })}
                                     </div>
                                 ))}
+                            </div> */}
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between mb-4">
+                                    <Button
+                                        variant="outline"
+                                        size="icon"
+                                        onClick={() => setCurrentDate(prev => dateFns.addDays(prev, -7))}
+                                        disabled={dateFns.isBefore(dateFns.startOfWeek(currentDate), new Date())}
+                                    >
+                                        <ChevronLeft className="h-4 w-4" />
+                                    </Button>
+                                    <div className="text-sm font-medium">
+                                        {dateFns.format(dateFns.startOfWeek(currentDate), 'MMM d')} - {dateFns.format(dateFns.addDays(dateFns.startOfWeek(currentDate), 6), 'MMM d, yyyy')}
+                                    </div>
+                                    <Button
+                                        variant="outline"
+                                        size="icon"
+                                        onClick={() => setCurrentDate(prev => dateFns.addDays(prev, 7))}
+                                    >
+                                        <ChevronRight className="h-4 w-4" />
+                                    </Button>
+                                </div>
+                                <div className="grid grid-cols-8 gap-1 text-xs">
+                                    <div className="font-bold">Time</div>
+                                    {Array.from({ length: 7 }, (_, i) => dateFns.addDays(dateFns.startOfWeek(currentDate), i)).map(day => (
+                                        <div key={day.toISOString()} className="font-bold text-center">{dateFns.format(day, 'EEE')}</div>
+                                    ))}
+                                    {timeSlots.map((time, timeIndex) => (
+                                        <>
+                                            <div key={time} className="py-1">{time}</div>
+                                            {Array.from({ length: 7 }, (_, i) => dateFns.addDays(dateFns.startOfWeek(currentDate), i)).map(day => {
+                                                const isDisabled = isSlotDisabled(day, timeIndex)
+                                                const isAvailable = isSlotAvailable(day, timeIndex)
+                                                return (
+                                                    <motion.button
+                                                        key={`${day}-${time}`}
+                                                        className={`w-full h-8 lg:h-10 rounded-md ${isDisabled ? 'bg-gray-300 cursor-not-allowed' : isAvailable ? 'bg-green-500' : 'bg-gray-200'} hover:opacity-80 transition-opacity`}
+                                                        onClick={() => !isDisabled && toggleSlot(day, timeIndex)}
+                                                        aria-label={`Toggle availability for ${day} at ${time}`}
+                                                        whileHover={{ scale: 1 }}
+                                                        whileTap={{ scale: 0.8 }}
+                                                    />
+                                                )
+                                            })}
+                                        </>
+                                    ))}
+                                </div>
                             </div>
                         </ScrollArea>
                         <div className=" w-full mt-3 px-4 pb-3">
