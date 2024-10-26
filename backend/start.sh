@@ -34,7 +34,7 @@ if $REMOVE_IMAGES; then
         echo "No docker images found"
     fi
 fi
-DOCKER_TAG_NAME="master"
+DOCKER_TAG_NAME="therapist"
 echo "Building docker image"
 docker build -t $DOCKER_TAG_NAME . 
 echo "Deploying App"
