@@ -83,7 +83,7 @@ const dropzoneConfig = {
         "image/*": [".jpg", ".jpeg", ".png"],
     },
     multiple: true,
-    maxFiles: 2,
+    maxFiles: 1,
     maxSize: 5 * 1024 * 1024,
 } satisfies DropzoneOptions;
 const timeSlots = Array.from({ length: 11 }, (_, i) => {
