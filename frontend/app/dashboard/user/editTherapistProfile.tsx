@@ -69,9 +69,10 @@ import {
     CommandList,
 } from "@/components/ui/command"
 import { motion } from 'framer-motion'
+import { toast } from "sonner"
 const editProfileSchema = z.object({
-    profilePicture: z.array(z.custom<File>()).optional(),
-    coverPhoto: z.array(z.custom<File>()).optional(),
+    profilePicture: z.custom<File>().optional(),
+    coverPhoto: z.custom<File>().optional(),
     bio: z.string().max(200).optional()
 })
 const editScheduleSchema = z.object({
@@ -104,7 +105,7 @@ export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, se
     const profileForm = useForm<z.infer<typeof editProfileSchema>>({
         resolver: zodResolver(editProfileSchema),
         defaultValues: {
-
+            bio: ""
         },
     })
     const [currentDate, setCurrentDate] = useState(new Date())
@@ -156,10 +157,34 @@ export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, se
             dateFns.isSameDay(slot.dateAndTime, slotTime) && slot.dateAndTime.getHours() === slotTime.getHours()
         ) || false
     }
-    function onSubmitEditProfile(values: z.infer<typeof editProfileSchema>) {
-        console.log(values)
+    const onSubmitEditProfile = async (data: z.infer<typeof editProfileSchema>) => {
+        toast.promise(new Promise<string>(async (resolve, reject) => {
+            try {
+                const endpoint = "/api/users/editprofile"
+                let formData = new FormData()
+                Object.keys(data).map((key) => formData.append(key, (data as any)[key]))
+                const response: { status: boolean, message: string } = await fetch(endpoint, {
+                    method: 'post',
+                    body: formData
+                }).then(e => e.json())
+                if (response?.status) {
+                    resolve(response.message)
+                } else {
+                    reject(response.message)
+                }
+            } catch (e) {
+                reject("Try again later")
+            }
+        }), {
+            position: "top-center",
+            richColors: true,
+            dismissible: false,
+            loading: 'Please wait...',
+            duration: 1000,
+            success: (e) => e,
+            error: (e) => e.toString()
+        });
     }
-    console.log(availability)
     return (
         <ResponsiveModal open={isOpen} onOpenChange={setIsOpen}>
             <ResponsiveModalContent className=" p-0 max-h-[90dvh]">
@@ -188,10 +213,10 @@ export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, se
                                                 <FormControl>
                                                     <div className="flex flex-col justify-center items-center">
                                                         <FileUploader
-                                                            className={cn(field.value?.[0] && "hidden")}
+                                                            className={cn(field.value && "hidden")}
                                                             dropzoneOptions={dropzoneConfig}
                                                             value={field.value as any}
-                                                            onValueChange={field.onChange}
+                                                            onValueChange={e => field.onChange(e?.[0])}
                                                         >
                                                             <FileInput>
                                                                 <div className="flex flex-col items-center rounded-md justify-center min-h-40 border bg-background p-4">
@@ -206,7 +231,7 @@ export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, se
                                                                 </div>
                                                             </FileInput>
                                                         </FileUploader>
-                                                        {field.value?.[0] && (
+                                                        {field.value && (
                                                             <div className="relative">
                                                                 <Button
                                                                     onClick={() => field.onChange(null)}
@@ -215,8 +240,8 @@ export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, se
                                                                     <X className="w-5 h-5" />
                                                                 </Button>
                                                                 <Image
-                                                                    src={URL.createObjectURL(field.value[0])}
-                                                                    alt={field.value[0].name}
+                                                                    src={URL.createObjectURL(field.value)}
+                                                                    alt={field.value.name}
                                                                     height={400}
                                                                     width={400}
                                                                     className="size-40 p-0 rounded-full"
@@ -239,10 +264,10 @@ export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, se
                                                 <FormControl>
                                                     <div className="flex flex-col justify-center items-center">
                                                         <FileUploader
-                                                            className={cn(field.value?.[0] && "hidden")}
+                                                            className={cn(field.value && "hidden")}
                                                             dropzoneOptions={dropzoneConfig}
                                                             value={field.value as any}
-                                                            onValueChange={field.onChange}
+                                                            onValueChange={e => field.onChange(e?.[0])}
                                                         >
                                                             <FileInput>
                                                                 <div className="flex flex-col items-center rounded-md justify-center min-h-40 border bg-background p-4">
@@ -257,7 +282,7 @@ export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, se
                                                                 </div>
                                                             </FileInput>
                                                         </FileUploader>
-                                                        {field.value?.[0] && (
+                                                        {field.value && (
                                                             <div className="relative w-full">
                                                                 <Button
                                                                     onClick={() => field.onChange(null)}
@@ -266,8 +291,8 @@ export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, se
                                                                     <X className="w-5 h-5" />
                                                                 </Button>
                                                                 <Image
-                                                                    src={URL.createObjectURL(field.value[0])}
-                                                                    alt={field.value[0].name}
+                                                                    src={URL.createObjectURL(field.value)}
+                                                                    alt={field.value.name}
                                                                     height={400}
                                                                     width={400}
                                                                     className="h-40 w-full p-0 rounded-md"
@@ -307,62 +332,6 @@ export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, se
                     </TabsContent>
                     <TabsContent value="schedules">
                         <ScrollArea className=" max-h-[60dvh] flex flex-col gap-3 px-5">
-                            {/* <div className="flex flex-col gap-0.5 md:gap-2">
-                                <div className=" sticky top-0 z-10 bg-background">
-                                    <div className="flex space-x-2 mb-2">
-                                        <Button
-                                            variant="outline"
-                                            size="icon"
-                                            onClick={() => setCurrentWeek(prev => Math.max(0, prev - 1))}
-                                            disabled={currentWeek === 0}
-                                        >
-                                            <ChevronLeft className="h-4 w-4" />
-                                        </Button>
-                                        <div className="text-sm font-medium grid w-full place-items-center">
-                                            {dateFns.format(startDate, 'MMM d')} - {dateFns.format(endDate, 'MMM d, yyyy')}
-                                        </div>
-                                        <Button
-                                            variant="outline"
-                                            size="icon"
-                                            onClick={() => setCurrentWeek(prev => Math.min(3, prev + 1))}
-                                            disabled={currentWeek === 3}
-                                        >
-                                            <ChevronRight className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                    <div className="grid grid-cols-8 text-xs place-items-center">
-                                        <div className="font-bold text-center">Time</div>
-                                        {daysOfWeek.map(day => (
-                                            <div key={day} className="font-bold text-center">{day.slice(0, 3)}</div>
-                                        ))}
-                                    </div>
-                                </div>
-                                {timeSlots.map((time, timeIndex) => (
-                                    <div key={time} className="grid grid-cols-8 gap-1 lg:gap-2 text-xs place-items-center">
-                                        <div className="py-1 text-xs text-center lg:whitespace-nowrap">{time}</div>
-                                        {daysOfWeek.map(day => {
-                                            const key = `week-${currentWeek}`
-                                            const startDate = dateFns.startOfWeek(dateFns.addWeeks(new Date(), currentWeek))
-                                            const dayIndex = daysOfWeek.indexOf(day)
-                                            const slotDate = dateFns.addDays(startDate, dayIndex)
-                                            const slotTime = dateFns.setHours(dateFns.setMinutes(slotDate, 0), timeIndex + 8)
-                                            const isAvailable = false
-                                            return (
-                                                <motion.button
-                                                    key={`${day}-${time}`}
-                                                    f={slotTime}
-                                                    h={availability[key]?.slots[0].dateAndTime ?? "f"}
-                                                    className={`w-full h-8 lg:h-10 rounded-md ${isAvailable ? 'bg-lime-500' : 'bg-zinc-300'} hover:opacity-80 transition-opacity`}
-                                                    onClick={() => toggleSlot(day, timeIndex)}
-                                                    aria-label={`Toggle availability for ${day} at ${time}`}
-                                                    whileHover={{ scale: 1 }}
-                                                    whileTap={{ scale: 0.8 }}
-                                                />
-                                            )
-                                        })}
-                                    </div>
-                                ))}
-                            </div> */}
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between mb-4">
                                     <Button
@@ -390,15 +359,15 @@ export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, se
                                         <div key={day.toISOString()} className="font-bold text-center">{dateFns.format(day, 'EEE')}</div>
                                     ))}
                                     {timeSlots.map((time, timeIndex) => (
-                                        <>
-                                            <div key={time} className="py-1">{time}</div>
+                                        <div key={time}>
+                                            <div className="py-1">{time}</div>
                                             {Array.from({ length: 7 }, (_, i) => dateFns.addDays(dateFns.startOfWeek(currentDate), i)).map(day => {
                                                 const isDisabled = isSlotDisabled(day, timeIndex)
                                                 const isAvailable = isSlotAvailable(day, timeIndex)
                                                 return (
                                                     <motion.button
                                                         key={`${day}-${time}`}
-                                                        className={`w-full h-8 lg:h-10 rounded-md ${isDisabled ? 'bg-gray-300 cursor-not-allowed' : isAvailable ? 'bg-green-500' : 'bg-gray-200'} hover:opacity-80 transition-opacity`}
+                                                        className={`w-full h-8 lg:h-10 rounded-md ${isDisabled ? 'bg-gray-300 dark:bg-gray-400 cursor-not-allowed' : isAvailable ? 'bg-green-500' : 'bg-gray-200'} hover:opacity-80 transition-opacity`}
                                                         onClick={() => !isDisabled && toggleSlot(day, timeIndex)}
                                                         aria-label={`Toggle availability for ${day} at ${time}`}
                                                         whileHover={{ scale: 1 }}
@@ -406,7 +375,7 @@ export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, se
                                                     />
                                                 )
                                             })}
-                                        </>
+                                        </div>
                                     ))}
                                 </div>
                             </div>

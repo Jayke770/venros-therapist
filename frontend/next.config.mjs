@@ -17,6 +17,10 @@ const nextConfig = {
         source: "/api/:path*",
         destination: `${new URL(process.env.APP_BACKEND).toString()}api/:path*`,
       },
+      {
+        source: "/file/:path*",
+        destination: `https://utfs.io/a/${process.env.UPLOADTHING_APP_ID}/:path*`,
+      }
     ];
   },
 };

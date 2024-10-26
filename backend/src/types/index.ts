@@ -19,6 +19,8 @@ export interface IUserDataModel {
     yrsOfExp: number,
     therapistAccountStatus: "pending" | "activated" | null
     bio?: string
+    coverPhoto?: string
+    profilePhoto?: string
 }
 export interface ISession {
     id: string,

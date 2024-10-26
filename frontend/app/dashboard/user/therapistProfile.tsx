@@ -26,14 +26,14 @@ export default function TherapistProfile(props: {
     isOwner: boolean
 }) {
     const [toggleEditProfile, setToggleEditProfile] = useState<boolean>(false)
-    const { userData, userDataLoading } = useGetUser(props?.userId)
+    const { userData } = useGetUser(props?.userId)
     const onToggleEditProfile = (e: boolean) => setToggleEditProfile(e)
     return (
         <>
             <main className=" px-4 lg:px-24 py-3 ">
                 <div
                     style={{
-                        backgroundImage: "url(/assets/images/hospital.jpg)",
+                        backgroundImage: `url(/file/${userData?.data?.profilePhoto})`,
                         backgroundSize: "cover",
                         backgroundPosition: "center",
                         backgroundRepeat: "no-repeat"
@@ -44,7 +44,7 @@ export default function TherapistProfile(props: {
                             <div className="flex justify-center items-center">
                                 <div className="relative">
                                     <Avatar className="w-40 h-40 border-1 border-white shadow-lg">
-                                        <AvatarImage src={faker.image.urlLoremFlickr({ category: "doctors" })} alt="Therapist" className=" object-cover" />
+                                        <AvatarImage src={`/file/${userData?.data?.profilePhoto}`} alt="Therapist" className=" object-cover" />
                                         <AvatarFallback>JK</AvatarFallback>
                                     </Avatar>
                                     {props?.isOwner && (

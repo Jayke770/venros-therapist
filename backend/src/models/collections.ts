@@ -18,7 +18,8 @@ const UserDataSchema = new Schema<IUserDataModel>(
         yrsOfExp: { type: Number, default: 0 },
         bio: { type: String, default: null },
         pNumber: { type: String },
-
+        coverPhoto: { type: String },
+        profilePhoto: { type: String }
     },
     {
         timestamps: true
