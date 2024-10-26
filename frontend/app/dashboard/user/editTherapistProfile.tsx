@@ -162,12 +162,17 @@ export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, se
             try {
                 const endpoint = "/api/users/editprofile"
                 let formData = new FormData()
-                Object.keys(data).map((key) => formData.append(key, (data as any)[key]))
+                Object.keys(data).map((key) => {
+                    if ((data as any)[key]) {
+                        formData.append(key, (data as any)[key])
+                    }
+                })
                 const response: { status: boolean, message: string } = await fetch(endpoint, {
                     method: 'post',
                     body: formData
                 }).then(e => e.json())
                 if (response?.status) {
+                    profileForm.reset()
                     resolve(response.message)
                 } else {
                     reject(response.message)
