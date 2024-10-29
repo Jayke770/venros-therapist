@@ -11,6 +11,8 @@ export interface IAuthSession {
     address: string,
     email: string,
     gender: string,
+    profilePhoto?: string,
+    coverPhoto?: string,
     status: true
 }
 export interface IAuthenticate {

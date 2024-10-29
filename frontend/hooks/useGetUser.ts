@@ -9,7 +9,8 @@ export default function useGetUser(userId?: string): { userData?: { status: bool
             revalidateOnFocus: true,
             revalidateOnReconnect: true,
             refreshWhenHidden: true,
-            refreshWhenOffline: true
+            refreshWhenOffline: true,
+            refreshInterval: 5000
         }
     );
     return {

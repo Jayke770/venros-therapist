@@ -33,7 +33,7 @@ export default function TherapistProfile(props: {
             <main className=" px-4 lg:px-24 py-3 ">
                 <div
                     style={{
-                        backgroundImage: `url(/file/${userData?.data?.profilePhoto})`,
+                        backgroundImage: `url(/file/${userData?.data?.coverPhoto})`,
                         backgroundSize: "cover",
                         backgroundPosition: "center",
                         backgroundRepeat: "no-repeat"

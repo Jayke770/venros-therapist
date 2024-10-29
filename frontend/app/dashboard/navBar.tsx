@@ -68,7 +68,7 @@ export default async function NavBar(props: { session?: IAuthSession }) {
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" className="rounded-full">
                             <Avatar>
-                                <AvatarImage src={undefined} alt={props?.session?.name} className=" object-cover" />
+                                <AvatarImage src={props?.session?.profilePhoto} alt={props?.session?.name} className=" object-cover" />
                                 <AvatarFallback>{props?.session?.name?.substring(0, 1)}</AvatarFallback>
                             </Avatar>
                             <span className="sr-only">Toggle Menu</span>

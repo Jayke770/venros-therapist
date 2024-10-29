@@ -91,7 +91,7 @@ router.post("/signup", async ({ request, body, cookie: { auth } }) => {
                     if (file) signUpFiles[key] = file.data?.key
                 }
             }
-            newUser.files = signUpFiles 
+            newUser.files = signUpFiles
             await newUser.save()
         }
         auth.set({
@@ -102,6 +102,8 @@ router.post("/signup", async ({ request, body, cookie: { auth } }) => {
                 dob: newUser.dob,
                 email: newUser.email,
                 gender: newUser.gender,
+                profilePhoto: newUser.profilePhoto,
+                coverPhoto: newUser.coverPhoto
             }),
             httpOnly: true,
             expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
@@ -174,7 +176,9 @@ router.get("/user", async ({ request, cookie }) => {
             email: userData.email,
             gender: userData.gender,
             name: userData.name,
-            userType: userData.userType
+            userType: userData.userType,
+            profilePhoto: userData.profilePhoto,
+            coverPhoto: userData.coverPhoto
         }
     } catch (e) {
         console.log(e)
@@ -195,6 +199,8 @@ router.get("/user", async ({ request, cookie }) => {
                 address: t.Optional(t.String()),
                 email: t.Optional(t.String()),
                 gender: t.Optional(t.String()),
+                profilePhoto: t.Optional(t.String()),
+                coverPhoto: t.Optional(t.String()),
             }
         ),
     },
