@@ -20,7 +20,6 @@ const app = new Elysia({ serve: { reusePort: true, hostname: "0.0.0.0" } })
   }))
 app.use(
   swagger({
-    path: "/",
     autoDarkMode: true,
     exclude: ["/", "/json"],
     documentation: {
