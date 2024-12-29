@@ -11,6 +11,9 @@ import { authHandler } from '@/lib/auth'
 import { helmet } from 'elysia-helmet';
 const app = new Elysia({ serve: { reusePort: true, hostname: "0.0.0.0" } })
   .use(cors({ origin: config.DOMAINS?.split(","), credentials: true }))
+  .onError(({ code, error, path }) => {
+    console.log(code, error)
+  })
 app.use(
   swagger({
     autoDarkMode: true,
