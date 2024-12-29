@@ -117,10 +117,19 @@ router.post("/signup", async ({ request, body, cookie: { auth } }) => {
     tags: ["Authentication"],
     body: t.Union([
         t.Object({
+            type: t.Literal("user"),
+            fullName: t.String({ minLength: 5 }),
+            pNumber: t.String(),
+            gender: t.Union([t.Literal("male"), t.Literal("female"), t.Literal("undisclosed")]),
+            email: t.String(),
+            password: t.String({ minLength: 8 }),
+            confirmPassword: t.String({ minLength: 8 }),
+        }),
+        t.Object({
             type: t.Literal("therapist"),
             fullName: t.String({ minLength: 5 }),
             dob: t.Date(),
-            pNumber: t.String({ minLength: 10 }),
+            pNumber: t.String(),
             address: t.String({ minLength: 10 }),
             gender: t.Union([t.Literal("male"), t.Literal("female"), t.Literal("undisclosed")]),
             languages: t.String(),
@@ -135,15 +144,6 @@ router.post("/signup", async ({ request, body, cookie: { auth } }) => {
             email: t.String(),
             password: t.String({ minLength: 8 }),
             confirmPassword: t.String({ minLength: 8 })
-        }),
-        t.Object({
-            type: t.Literal("user"),
-            fullName: t.String({ minLength: 5 }),
-            pNumber: t.String({ minLength: 10 }),
-            gender: t.Union([t.Literal("male"), t.Literal("female"), t.Literal("undisclosed")]),
-            email: t.String(),
-            password: t.String({ minLength: 8 }),
-            confirmPassword: t.String({ minLength: 8 }),
         })
     ]),
     response: {
