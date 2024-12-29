@@ -12,7 +12,7 @@
     "@elysiajs/jwt": "1.0.2",
     "@elysiajs/swagger": "^1.1.1",
     "@faker-js/faker": "^8.4.1",
-    "elysia": "latest",
+    "elysia": "^1.2.9",
     "elysia-helmet": "^2.0.0",
     "envalid": "^8.0.0",
     "http-status-codes": "^2.3.0",
