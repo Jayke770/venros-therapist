@@ -9,4 +9,5 @@ RUN bun install --production
 COPY . .
 COPY tsconfig.json .
 ENV NODE_ENV production
+EXPOSE 3000
 CMD ["bun", "start-cluster"]
