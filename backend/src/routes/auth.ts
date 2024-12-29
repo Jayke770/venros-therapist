@@ -111,6 +111,7 @@ router.post("/signup", async ({ request, body, cookie: { auth } }) => {
         })
         return { status: true, message: "Account Successfully Created" }
     } catch (e) {
+        console.error(e)
         return { status: false, message: "Failed to create account" }
     }
 }, {
