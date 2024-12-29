@@ -43,6 +43,7 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { toast } from "sonner"
 import { authHandler } from "@/lib/auth"
+import { useRouter } from "next/navigation"
 const therapistSignUpFormSchema = z.object({
     fullName: z.string().min(5, { message: "Invalid Full Name." }),
     dob: z.date({
@@ -76,6 +77,7 @@ const userSignUpFormSchema = z.object({
     confirmPassword: z.string().min(8, { message: "Password must be more than 8 characters" })
 })
 export default function SignupForm() {
+    const router = useRouter()
     const { languages } = useLanguages()
     const [isCreatingAccount, setCreatingAccount] = useState<boolean>(false)
     const therapistSignUpForm = useForm<z.infer<typeof therapistSignUpFormSchema>>({
@@ -131,6 +133,7 @@ export default function SignupForm() {
             loading: 'Creating Account...',
             success: (data) => {
                 setCreatingAccount(false)
+                router.replace("/dashboard")
                 return data.message
             },
             error: (e) => {
@@ -332,7 +335,6 @@ export default function SignupForm() {
                                                                 disabled={(date) =>
                                                                     date > new Date() || date < new Date("1900-01-01")
                                                                 }
-                                                                initialFocus
                                                             />
                                                         </PopoverContent>
                                                     </Popover>

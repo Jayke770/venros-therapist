@@ -20,6 +20,9 @@ class Handler {
         try {
             const req = await fetch(`${this.HOST}api/auth/signin`, {
                 method: "post",
+                headers: {
+                    "content-type": "application/json"
+                },
                 body: JSON.stringify(data)
             })
             if (!req.ok) return { status: false }
