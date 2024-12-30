@@ -102,8 +102,7 @@ export default function Dashboard(props: { session?: IAuthSession }) {
                                             </Button>
                                             <Button asChild variant={"outline"} className="w-full">
                                                 <Link
-                                                    scroll={false}
-                                                    href={`/dashboard/user?id=${data.id}`}>
+                                                    href={`/dashboard/user/therapist/?id=${data.id}`}>
                                                     View Profile
                                                 </Link>
                                             </Button>

@@ -20,72 +20,53 @@ import type { IAuthSession } from "@/types"
 import useGetUser from "@/hooks/useGetUser"
 import EditProfile from "./editTherapistProfile"
 import { useCallback, useState } from "react"
-export default function TherapistProfile(props: {
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+export default function ViewTherapistProfile(props: {
     session?: IAuthSession,
-    userId: string | undefined,
-    isOwner: boolean
+    userId?: string | undefined
 }) {
     const [toggleEditProfile, setToggleEditProfile] = useState<boolean>(false)
     const { userData } = useGetUser(props?.userId)
     const onToggleEditProfile = (e: boolean) => setToggleEditProfile(e)
     return (
         <>
-            <main className=" px-4 lg:px-24 py-3 ">
-                <div
-                    style={{
-                        backgroundImage: `url(/file/${userData?.data?.coverPhoto})`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        backgroundRepeat: "no-repeat"
-                    }}
-                    className="relative rounded-2xl h-72 lg:h-80 min-w-[250px] w-full">
-                    <div className=" absolute lg:left-5 -bottom-44 lg:-bottom-16 lg:right-5 w-full flex justify-between gap-3 lg:gap-0 flex-col lg:flex-row lg:w-auto transition-all">
-                        <div className="flex flex-col lg:flex-row">
-                            <div className="flex justify-center items-center">
-                                <div className="relative">
-                                    <Avatar className="w-40 h-40 border-1 border-white shadow-lg">
-                                        <AvatarImage src={`/file/${userData?.data?.profilePhoto}`} alt="Therapist" className=" object-cover" />
-                                        <AvatarFallback>JK</AvatarFallback>
-                                    </Avatar>
-                                    {props?.isOwner && (
-                                        <Button
-                                            className="rounded-full absolute right-1.5 bottom-3 shadow-lg"
-                                            size={"icon"}>
-                                            <CameraIcon />
-                                        </Button>
-                                    )}
+            <main className=" px-4 lg:px-20 py-5 flex flex-col lg:flex-row gap-2 w-full ">
+                <div className="flex flex-col gap-2 flex-[70%]">
+                    <div
+                        style={{
+                            backgroundImage: `url(/file/${userData?.data?.coverPhoto})`,
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                            backgroundRepeat: "no-repeat"
+                        }}
+                        className="relative rounded-2xl h-72 lg:h-80 min-w-[250px] w-full">
+                        <div className=" absolute lg:left-5 -bottom-44 lg:-bottom-16 lg:right-5 w-full flex justify-between gap-3 lg:gap-0 flex-col lg:flex-row lg:w-auto transition-all">
+                            <div className="flex flex-col lg:flex-row">
+                                <div className="flex justify-center items-center">
+                                    <div className="relative">
+                                        <Avatar className="w-40 h-40 border-1 border-white shadow-lg">
+                                            <AvatarImage src={`/file/${userData?.data?.profilePhoto}`} alt="Therapist" className=" object-cover" />
+                                            <AvatarFallback>JK</AvatarFallback>
+                                        </Avatar>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col justify-end items-center lg:items-start px-4 h-full mt-3 lg:mt-0">
+                                    <h1 className="text-2xl font-bold text-center">{userData?.data?.name}</h1>
+                                    <p className="text-muted-foreground text-center">N/A</p>
                                 </div>
                             </div>
-                            <div className="flex flex-col justify-end items-center lg:items-start px-4 h-full mt-3 lg:mt-0">
-                                <h1 className="text-2xl font-bold text-center">{props?.session?.name}</h1>
-                                <p className="text-muted-foreground text-center">N/A</p>
+                            <div className="flex gap-2 justify-center items-end">
+                                <Button variant={"outline"}>
+                                    <CalendarCheck className="mr-2 h-4 w-4" />
+                                    Book Now
+                                </Button>
+                                <Button variant={"outline"}>
+                                    <MessageCircle className="mr-2 h-4 w-4" />Message
+                                </Button>
                             </div>
                         </div>
-                        <div className="flex gap-2 justify-center items-end">
-                            {props?.isOwner ? (
-                                <>
-                                    <Button
-                                        onClick={() => onToggleEditProfile(true)}>
-                                        <Pencil className="mr-2 h-4 w-4" />
-                                        Edit
-                                    </Button>
-                                </>
-                            ) : (
-                                <>
-                                    <Button variant={"outline"}>
-                                        <CalendarCheck className="mr-2 h-4 w-4" />
-                                        Book Now
-                                    </Button>
-                                    <Button variant={"outline"}>
-                                        <MessageCircle className="mr-2 h-4 w-4" />Message
-                                    </Button>
-                                </>
-                            )}
-                        </div>
                     </div>
-                </div>
-                <div className="flex flex-col lg:flex-row gap-4 mt-52 w-full lg:mt-24">
-                    <div className="flex flex-col gap-2 flex-[30%]">
+                    <div className="flex flex-col lg:flex-row mt-52 w-full lg:mt-24">
                         <Card className={cn("shadow-none w-full")}>
                             <CardContent className="p-6 flex flex-col gap-4">
                                 <div className="flex flex-col gap-1">
@@ -145,32 +126,32 @@ export default function TherapistProfile(props: {
                             </CardContent>
                         </Card>
                     </div>
-                    <div className="pb-5 flex-[70%]">
-                        <ScrollArea className={cn("h-auto lg:h-[90vh]")} >
-                            {[...Array(20)].map((_, i) => (
-                                <Card key={i} className={cn("shadow-none w-full mt-2 first:mt-0 last:mb-2")}>
-                                    <CardContent className="p-4">
-                                        <div className="flex items-center gap-2">
-                                            <Avatar className="h-12 w-12">
-                                                <AvatarImage src={faker.image.urlLoremFlickr({ category: "doctors" })} className="object-cover" />
-                                                <AvatarFallback>SM</AvatarFallback>
-                                            </Avatar>
-                                            <div className="flex-1">
-                                                <div className="font-semibold">{faker.person.fullName()}</div>
-                                                <div className="text-sm text-muted-foreground line-clamp-1">
-                                                    {faker.lorem.lines()}
-                                                </div>
-                                                <div className="text-xs text-muted-foreground">{utils.formatDate(faker.date.recent())}</div>
+                </div>
+                <div className="pb-5 hidden lg:block flex-[30%] sticky top-0">
+                    <ScrollArea className={cn("h-auto lg:h-screen lg:px-4")} >
+                        <div className=" sticky top-0 bg-background p-2 py-1 z-10">New Therapist</div>
+                        {[...Array(10)].map((_, i) => (
+                            <Card key={i} className={cn("shadow-none w-full mt-2 first:mt-0 last:mb-2")}>
+                                <CardContent className="p-4">
+                                    <div className="flex items-center gap-2">
+                                        <Avatar className="h-12 w-12">
+                                            <AvatarImage src={faker.image.urlLoremFlickr({ category: "doctors" })} className="object-cover" />
+                                            <AvatarFallback>SM</AvatarFallback>
+                                        </Avatar>
+                                        <div className="flex-1">
+                                            <div className="font-semibold">{faker.person.fullName()}</div>
+                                            <div className="text-sm text-muted-foreground line-clamp-1">
+                                                {faker.lorem.lines()}
                                             </div>
+                                            <div className="text-xs text-muted-foreground">{utils.formatDate(faker.date.recent())}</div>
                                         </div>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </ScrollArea>
-                    </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </ScrollArea>
                 </div>
             </main>
-            <EditProfile isOpen={toggleEditProfile} setIsOpen={onToggleEditProfile} />
         </>
     )
 }

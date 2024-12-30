@@ -1,9 +1,9 @@
-import type { IAuthSession, IAuthenticate } from '@/types'
+import type { IAuthSession, IAuthenticate, IUserData } from '@/types'
 class Handler {
-    private readonly HOST = new URL(process?.env?.NEXT_PUBLIC_APP_HOST ?? "").toString()
+    private readonly HOST = process?.env?.NEXT_PUBLIC_APP_HOST
     async getSession(cookie: { name?: string, value?: string }): Promise<IAuthSession | undefined> {
         try {
-            const req = await fetch(`${this.HOST}api/auth/user`, {
+            const req = await fetch(new URL(`${this.HOST}/api/auth/user`), {
                 headers: {
                     cookie: `${cookie?.name}=${cookie?.value};`
                 }
@@ -18,7 +18,7 @@ class Handler {
     }
     async signIn(data: { [key: string]: any }): Promise<IAuthenticate> {
         try {
-            const req = await fetch(`${this.HOST}api/auth/signin`, {
+            const req = await fetch(new URL(`${this.HOST}/api/auth/signin`), {
                 method: "post",
                 headers: {
                     "content-type": "application/json"
@@ -35,7 +35,7 @@ class Handler {
     }
     async signUp(data: FormData): Promise<IAuthenticate> {
         try {
-            const req = await fetch(`${this.HOST}api/auth/signup`, {
+            const req = await fetch(new URL(`${this.HOST}/api/auth/signup`), {
                 method: "post",
                 body: data
             })
@@ -47,11 +47,17 @@ class Handler {
             return { status: false }
         }
     }
-    async getUser(id: string): Promise<any> {
+    async getUser(id?: string, cookie?: { name?: string, value?: string }): Promise<{ status: boolean, data?: IUserData }> {
         try {
-            const req = await fetch(`${this.HOST}api/users?id=${id}`)
+            const req = await fetch(new URL(`${this.HOST}/api/users?id=${id}`), {
+                headers: {
+                    cookie: `${cookie?.name}=${cookie?.value};`
+                }
+            })
+            console.log("fsafsfasfasf", req.statusText)
             if (!req.ok) return { status: false }
-            const res: IAuthenticate = await req.json()
+            const res: { status: boolean, data: IUserData } = await req.json()
+            console.log("data", res)
             if (!res?.status) return res
             return res
         } catch (e) {

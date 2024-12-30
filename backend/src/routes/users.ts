@@ -73,11 +73,27 @@ router.get("/therapist", async ({ query, cookie }) => {
             },
             { $skip: query.skip },
             { $limit: query.limit },
-            { $addFields: { id: "$_id" } },
-            { $project: { password: 0, positionApplying: 0, educationQualification: 0, userType: 0, _id: 0, __v: 0 } }
+            {
+                $addFields: {
+                    id: {
+                        $toString: "$_id"
+                    }
+                }
+            },
+            {
+                $project: {
+                    password: 0,
+                    positionApplying: 0,
+                    educationQualification: 0,
+                    userType: 0,
+                    _id: 0,
+                    __v: 0
+                }
+            }
         ])
         return { status: true, data: therapist }
     } catch (e) {
+        console.log(e)
         return { status: false, message: "Failed to fetch therapist" }
     }
 }, {

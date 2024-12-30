@@ -1,6 +1,6 @@
 import NavBar from "@/components/ui/navBar"
-import ViewUserProfile from "./viewProfile"
-import UserProfile from "./profile"
+import TherapistProfile from './profile'
+import ViewTherapistProfile from "./viewTherapist"
 import { cookies } from 'next/headers'
 import { authHandler } from "@/lib/auth"
 import { redirect } from "next/navigation"
@@ -14,10 +14,10 @@ export async function generateMetadata(
     parent: ResolvingMetadata
 ): Promise<Metadata> {
     return {
-        title: "User Profile"
+        title: "Therapist Profile"
     }
 }
-export default async function UserDashboard(props: {
+export default async function Profile(props: {
     params: { [key: string]: string | boolean | number | null | undefined },
     searchParams: { id?: string }
 }) {
@@ -28,14 +28,14 @@ export default async function UserDashboard(props: {
         authHandler.getUser(props.searchParams.id, { name: authCookie?.name, value: authCookie?.value })
     ])
     if (!session) redirect("/get-started")
-    if (userData.data?.userType === "therapist") redirect(`/dashboard/user/therapist?id=${props.searchParams.id}`)
+    if (userData.data?.userType === "user") redirect(`/dashboard/user?id=${props.searchParams.id}`)
     return (
         <>
             <NavBar session={session} />
             {session.id === props?.searchParams?.id ? (
-                <UserProfile session={session} />
+                <TherapistProfile session={session} userId={props.searchParams.id} />
             ) : (
-                <ViewUserProfile session={session} userId={props.searchParams.id} />
+                <ViewTherapistProfile session={session} userId={props.searchParams.id} />
             )}
         </>
     )

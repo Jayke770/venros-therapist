@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import { MessageCircle, Sparkles, User } from "lucide-react"
+import { MessageCircle, Sparkles, Bell } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { faker } from '@faker-js/faker'
 import { cn, utils } from "@/lib/utils"
@@ -30,6 +30,37 @@ export default async function NavBar(props: { session?: IAuthSession }) {
                             Contact
                         </Link>
                     </div> */}
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="rounded-full">
+                            <Bell className="w-7 h-7" />
+                            <span className="sr-only">Toggle Menu</span>
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-screen  md:w-[400px]">
+                        <div className="max-h-96 overflow-auto">
+                            {[...Array(12)].map((_, i) => (
+                                <DropdownMenuItem key={i} className=" cursor-pointer" asChild>
+                                    <Link href={`?chatId=${i}`}>
+                                        <div className="flex items-center gap-2">
+                                            <Avatar className="h-8 w-8">
+                                                <AvatarImage src={faker.image.urlLoremFlickr({ category: "doctors" })} />
+                                                <AvatarFallback>SM</AvatarFallback>
+                                            </Avatar>
+                                            <div className="flex-1">
+                                                <div className="font-semibold">{faker.person.fullName()}</div>
+                                                <div className="text-sm text-muted-foreground line-clamp-1">
+                                                    {faker.lorem.lines()}
+                                                </div>
+                                                <div className="text-xs text-muted-foreground">{utils.formatDate(faker.date.recent())}</div>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                </DropdownMenuItem>
+                            ))}
+                        </div>
+                    </DropdownMenuContent>
+                </DropdownMenu>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" className="rounded-full">
