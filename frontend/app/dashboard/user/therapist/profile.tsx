@@ -56,7 +56,7 @@ export default function TherapistProfile(props: {
                                     </div>
                                 </div>
                                 <div className="flex flex-col justify-end items-center lg:items-start px-4 h-full mt-3 lg:mt-0">
-                                    <h1 className="text-2xl font-bold text-center">{props?.session?.name}</h1>
+                                    <h1 className="text-2xl font-bold text-center">{userData?.data.name}</h1>
                                     <p className="text-muted-foreground text-center">N/A</p>
                                 </div>
                             </div>
@@ -86,7 +86,7 @@ export default function TherapistProfile(props: {
                                         <div className="space-y-1">
                                             <div className="flex items-center gap-2">
                                                 <MailIcon className="w-5 h-5 text-muted-foreground" />
-                                                <span className="break-all">{props?.session?.email}</span>
+                                                <span className="break-all">{userData?.data.email}</span>
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <PhoneIcon className="w-5 h-5 text-muted-foreground" />
@@ -94,7 +94,7 @@ export default function TherapistProfile(props: {
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <LocateIcon className="w-5 h-5 text-muted-foreground" />
-                                                <span>{faker.location.city()}</span>
+                                                <span>{userData?.data.address}</span>
                                             </div>
                                         </div>
                                     </div>

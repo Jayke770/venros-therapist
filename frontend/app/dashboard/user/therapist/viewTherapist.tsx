@@ -25,9 +25,7 @@ export default function ViewTherapistProfile(props: {
     session?: IAuthSession,
     userId?: string | undefined
 }) {
-    const [toggleEditProfile, setToggleEditProfile] = useState<boolean>(false)
     const { userData } = useGetUser(props?.userId)
-    const onToggleEditProfile = (e: boolean) => setToggleEditProfile(e)
     return (
         <>
             <main className=" px-4 lg:px-20 py-5 flex flex-col lg:flex-row gap-2 w-full ">
@@ -71,14 +69,14 @@ export default function ViewTherapistProfile(props: {
                             <CardContent className="p-6 flex flex-col gap-4">
                                 <div className="flex flex-col gap-1">
                                     <div className="text-md font-semibold">About</div>
-                                    <div className="text-muted-foreground text-base ">{faker.lorem.paragraph()}</div>
+                                    <div className="text-muted-foreground text-base ">{userData?.data?.bio}</div>
                                 </div>
                                 <div className="flex flex-col gap-1">
                                     <div className="text-md font-semibold">Contact Information</div>
                                     <div className="space-y-1">
                                         <div className="flex items-center gap-2">
                                             <MailIcon className="w-5 h-5 text-muted-foreground" />
-                                            <span className="break-all">{props?.session?.email}</span>
+                                            <span className="break-all">{userData?.data?.email}</span>
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <PhoneIcon className="w-5 h-5 text-muted-foreground" />
@@ -86,7 +84,7 @@ export default function ViewTherapistProfile(props: {
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <LocateIcon className="w-5 h-5 text-muted-foreground" />
-                                            <span>{faker.location.city()}</span>
+                                            <span>{userData?.data.address}</span>
                                         </div>
                                     </div>
                                 </div>
