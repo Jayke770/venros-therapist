@@ -160,7 +160,7 @@ export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, se
     const onSubmitEditProfile = async (data: z.infer<typeof editProfileSchema>) => {
         toast.promise(new Promise<string>(async (resolve, reject) => {
             try {
-                const endpoint = "/api/users/editprofile"
+                const endpoint = "/api/user/editprofile"
                 let formData = new FormData()
                 Object.keys(data).map((key) => {
                     if ((data as any)[key]) {
@@ -190,6 +190,7 @@ export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, se
             error: (e) => e.toString()
         });
     }
+    console.log(availability)
     return (
         <ResponsiveModal open={isOpen} onOpenChange={setIsOpen}>
             <ResponsiveModalContent className=" p-0 max-h-[90dvh]">
@@ -364,8 +365,10 @@ export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, se
                                         <div key={day.toISOString()} className="font-bold text-center">{dateFns.format(day, 'EEE')}</div>
                                     ))}
                                     {timeSlots.map((time, timeIndex) => (
-                                        <div key={time}>
-                                            <div className="py-1">{time}</div>
+                                        <>
+                                            <div key={time} className="flex flex-col">
+                                                <div className="py-1">{time}</div>
+                                            </div>
                                             {Array.from({ length: 7 }, (_, i) => dateFns.addDays(dateFns.startOfWeek(currentDate), i)).map(day => {
                                                 const isDisabled = isSlotDisabled(day, timeIndex)
                                                 const isAvailable = isSlotAvailable(day, timeIndex)
@@ -380,7 +383,7 @@ export default function EditProfile({ isOpen, setIsOpen }: { isOpen: boolean, se
                                                     />
                                                 )
                                             })}
-                                        </div>
+                                        </>
                                     ))}
                                 </div>
                             </div>

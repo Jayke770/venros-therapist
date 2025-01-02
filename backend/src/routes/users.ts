@@ -4,7 +4,8 @@ import { UserData } from "@/models/collections";
 import { authHandler } from "@/lib/auth";
 import { mongo } from 'mongoose'
 import { utapi } from "@/lib/storage";
-const router = new Elysia({ prefix: "/api/users" })
+import cookie from "@elysiajs/cookie";
+const router = new Elysia({ prefix: "/api/user" })
 
 
 router.get("", async ({ query, cookie }) => {
@@ -68,7 +69,10 @@ router.get("/therapist", async ({ query, cookie }) => {
                 $match: {
                     _id: { $ne: new mongo.ObjectId(session.id) },
                     userType: { $eq: "therapist" },
-                    therapistAccountStatus: { $eq: "activated" }
+                    therapistAccountStatus: { $eq: "activated" },
+                    ...query?.search ? {
+                        name: { $regex: query.search, $options: "i" }
+                    } : {}
                 }
             },
             { $skip: query.skip },
@@ -97,11 +101,12 @@ router.get("/therapist", async ({ query, cookie }) => {
         return { status: false, message: "Failed to fetch therapist" }
     }
 }, {
-    tags: ["Users"],
+    tags: ["Therapist"],
     detail: { security: [{ JWTAuth: [] }] },
     query: t.Object({
         skip: t.Number({ default: 0 }),
-        limit: t.Number({ default: 20 })
+        limit: t.Number({ default: 20 }),
+        search: t.Optional(t.String())
     }),
     response: {
         "200": t.Object({
@@ -124,6 +129,19 @@ router.get("/therapist", async ({ query, cookie }) => {
     }
 })
 
+router.post("/therapist/schedules", async ({ cookie }) => {
+    try {
+
+    } catch (e) {
+
+    }
+}, {
+    tags: ["Therapist"],
+    body: t.Object({
+
+    })
+})
+
 router.post("/editprofile", async ({ body, cookie }) => {
     try {
         const token = cookie.auth.value ?? ""
@@ -135,12 +153,10 @@ router.post("/editprofile", async ({ body, cookie }) => {
         if (data?.bio) userData.bio = data.bio
         if (data?.coverPhoto) {
             const file = await utapi.uploadFiles(data.coverPhoto)
-            console.log(file)
             if (file) userData.coverPhoto = file.data?.key
         }
         if (data?.profilePicture) {
             const file = await utapi.uploadFiles(data.profilePicture)
-            console.log(file)
             if (file) userData.profilePhoto = file.data?.key
         }
         await userData.save()
@@ -163,5 +179,4 @@ router.post("/editprofile", async ({ body, cookie }) => {
         })
     }
 })
-
 export default router

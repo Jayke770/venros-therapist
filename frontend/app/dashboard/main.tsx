@@ -11,12 +11,17 @@ import Image from "next/image"
 import type { IAuthSession } from "@/types"
 import { FilterIcon, Loader2 } from "lucide-react"
 import useTherapist from "@/hooks/useTherapist"
-import { useMediaMatch } from 'rooks'
+import { useDebounce, useDebouncedValue, useMediaMatch } from 'rooks'
 import BookTherapist from "./bookTherapist"
 import { useState } from "react"
 export default function Dashboard(props: { session?: IAuthSession }) {
     const [openBookTherapist, setIsOpenTherapist] = useState<boolean>(false)
-    const { therapist, therapistLoading } = useTherapist() 
+    const [searchValue, setSearchValue] = useState("");
+    const setDebounceSearchValue = useDebounce(
+        setSearchValue,
+        500
+    );
+    const { therapist, therapistLoading } = useTherapist({ search: searchValue })
     return (
         <>
             <BookTherapist isOpen={openBookTherapist} setIsOpen={setIsOpenTherapist} />
@@ -60,7 +65,11 @@ export default function Dashboard(props: { session?: IAuthSession }) {
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
-                                <Input className="w-full" type="search" placeholder="Search" />
+                                <Input
+                                    onChange={e => setDebounceSearchValue(e.target.value)}
+                                    className="w-full"
+                                    type="search"
+                                    placeholder="Search" />
                             </div>
                         </div>
                         {/* list of therapist */}
@@ -128,7 +137,6 @@ export default function Dashboard(props: { session?: IAuthSession }) {
                     </Link>
                 </nav>
             </footer>
-
         </>
     )
 }

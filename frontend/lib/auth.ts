@@ -49,7 +49,7 @@ class Handler {
     }
     async getUser(id?: string, cookie?: { name?: string, value?: string }): Promise<{ status: boolean, data?: IUserData }> {
         try {
-            const req = await fetch(new URL(`${this.HOST}/api/users?id=${id}`), {
+            const req = await fetch(new URL(`${this.HOST}/api/user?id=${id}`), {
                 headers: {
                     cookie: `${cookie?.name}=${cookie?.value};`
                 }
