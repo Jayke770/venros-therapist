@@ -7,7 +7,7 @@ export default function useTherapist(props?: { limit?: 20, skip?: 0, search?: st
     if (props?.skip) query['skip'] = props.skip
     if (props?.limit) query['limit'] = props.limit
     if (props?.search) query['search'] = props.search
-    const { data, error, isLoading, mutate } = useSWR(`/api/users/therapist?${queryString.stringify(query)}`, fetcher,
+    const { data, error, isLoading, mutate } = useSWR(`/api/user/therapist?${queryString.stringify(query)}`, fetcher,
         {
             shouldRetryOnError: true,
             revalidateOnMount: true,
