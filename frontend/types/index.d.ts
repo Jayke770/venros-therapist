@@ -24,10 +24,11 @@ export interface ITherapist {
     yrsOfExp: number
     name: string
     address: string
-    dob: Date
     email: string
     gender: "male" | "female" | "undisclosed"
     languages: ILanguages[]
+    coverPhoto?: string
+    profilePhoto?: string
     createdAt: Date
     updatedAt: Date
 }

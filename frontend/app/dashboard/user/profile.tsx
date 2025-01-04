@@ -37,7 +37,7 @@ export default function UserProfile(props: {
                                     <div className="relative">
                                         <Avatar className="w-40 h-40 border-1 border-white shadow-lg">
                                             <AvatarImage src={`/file/${userData?.data?.profilePhoto}`} alt="Therapist" className=" object-cover" />
-                                            <AvatarFallback className="text-3xl">JK</AvatarFallback>
+                                            <AvatarFallback className="text-3xl">{userData?.data?.name?.substring(0, 1)}</AvatarFallback>
                                         </Avatar>
                                         <Button
                                             className="rounded-full absolute right-1.5 bottom-3 shadow-lg"

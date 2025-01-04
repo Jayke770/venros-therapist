@@ -14,6 +14,8 @@ import useTherapist from "@/hooks/useTherapist"
 import { useDebounce, useDebouncedValue, useMediaMatch } from 'rooks'
 import BookTherapist from "./bookTherapist"
 import { useState } from "react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { AspectRatio } from "@/components/ui/aspect-ratio"
 export default function Dashboard(props: { session?: IAuthSession }) {
     const [openBookTherapist, setIsOpenTherapist] = useState<boolean>(false)
     const [searchValue, setSearchValue] = useState("");
@@ -80,18 +82,22 @@ export default function Dashboard(props: { session?: IAuthSession }) {
                                 </div>
                             )}
                             {therapist?.data?.map(data => (
-                                <Card key={data.id} className="group bg-secondary dark:bg-card ">
+                                <Card key={data.id} className="group bg-secondary dark:bg-card max-h-[460px]">
                                     <div className="relative h-60 overflow-hidden rounded-t-lg">
-                                        <Image
-                                            unoptimized
-                                            src={faker.image.urlLoremFlickr({ category: "doctors" })}
-                                            alt={data.name}
-                                            width={400}
-                                            height={300}
-                                            loading="lazy"
-                                            className="h-full w-full transition-all duration-300 group-hover:scale-105"
-                                            style={{ aspectRatio: "400/300", objectFit: "cover" }}
-                                        />
+                                        {data?.profilePhoto ? (
+                                            <Image
+                                                unoptimized
+                                                src={`/file/${data?.profilePhoto}`}
+                                                alt={data.name}
+                                                width={400}
+                                                height={300}
+                                                loading="lazy"
+                                                className="h-full w-full transition-all duration-300 group-hover:scale-105"
+                                                style={{ aspectRatio: "400/300", objectFit: "cover" }}
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full bg-gradient-to-tr from-blue-600/60 to-slate-800/50" />
+                                        )}
                                     </div>
                                     <CardContent className="p-4">
                                         <div className="flex flex-col items-start justify-between gap-2">

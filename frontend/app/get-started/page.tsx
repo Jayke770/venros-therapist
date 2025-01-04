@@ -7,6 +7,7 @@ export default async function GetStarted() {
     const authCookie = cookieStore.get('auth')
     if (authCookie) {
         const session = await authHandler.getSession({ name: authCookie?.name, value: authCookie?.value })
+        if (session?.userType === "therapist") redirect(`/dashboard/user/therapist/?id=${session.id}`)
         if (session?.status) redirect("/dashboard")
     }
     return (

@@ -8,7 +8,7 @@ export default async function DashboardPage() {
     const authCookie = cookieStore.get('auth')
     const session = await authHandler.getSession({ name: authCookie?.name, value: authCookie?.value })
     if (!session) redirect("/get-started")
-    if (session.userType === "therapist") redirect(`/dashboard/user?id=${session.id}`)
+    if (session.userType === "therapist") redirect(`/dashboard/user/therapist/?id=${session.id}`)
     return (
         <>
             <NavBar session={session} />
