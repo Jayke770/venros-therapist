@@ -90,6 +90,7 @@ router.get("/therapist", async ({ query, cookie }) => {
                     positionApplying: 0,
                     educationQualification: 0,
                     userType: 0,
+                    dob: 0,
                     _id: 0,
                     __v: 0
                 }
@@ -115,12 +116,13 @@ router.get("/therapist", async ({ query, cookie }) => {
             data: t.Optional(t.Array(t.Object({
                 id: t.Any(),
                 yrsOfExp: t.Optional(t.Number()),
-                address: t.String(),
-                dob: t.Date(),
+                address: t.Optional(t.String()),
                 pNumber: t.Optional(t.String()),
                 email: t.String(),
                 gender: t.Union([t.Literal("male"), t.Literal("female"), t.Literal("undisclosed")]),
                 languages: t.Array(t.Object({ name: t.String(), code: t.String() })),
+                coverPhoto: t.Optional(t.String()),
+                profilePhoto: t.Optional(t.String()),
                 name: t.String(),
                 createdAt: t.Date(),
                 updatedAt: t.Date(),
